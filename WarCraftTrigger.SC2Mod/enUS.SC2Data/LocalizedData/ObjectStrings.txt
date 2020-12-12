@@ -1,1 +1,5 @@
-﻿User/Name/InputKeys=Inpu tKeys
+﻿Behavior/EditorPrefix/SetUnitPathing=Global -
+Behavior/EditorSuffix/SetUnitPathing=(Trigger)
+Name/SetUnitPathing=Set Unit Pathing
+Sound/Name/MusicThemeOrc=MusicThemeOrc
+User/Name/InputKeys=Inpu tKeys

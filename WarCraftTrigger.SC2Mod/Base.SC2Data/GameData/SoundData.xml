@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CSound id="MusicThemeOrc" parent="War3_MusicTheme">
+        <AssetArray File="Assets\Sounds\Music\OrcTheme.ogg"/>
+    </CSound>
+</Catalog>

@@ -22,9 +22,18 @@ void libGAWT_InitVariables () {
 
     libGAWT_InitVariables_completed = true;
 
+    libGAWT_gv_jassStateTable = DataTableInstanceLastCreated();
 }
 
 // Custom Script
+//--------------------------------------------------------------------------------------------------
+// Custom Script: JassStateTableInit
+//--------------------------------------------------------------------------------------------------
+void GAWT_JassStateTableInit(){
+DataTableInstanceCreate();
+libGAWT_gv_jassStateTable=DataTableInstanceLastCreated();
+}
+
 //--------------------------------------------------------------------------------------------------
 // Custom Script: TypeDef
 //--------------------------------------------------------------------------------------------------
@@ -238,20 +247,17 @@ order GAw3_OrderStringToOrder(string OrderString){
     int index=0;
     string Op=UserDataGetString("OrderString",OrderString,"Operator",1);
     order ord=null;
-    if(Op=="0"){ord=Order(AbilityCommand(Link,0));}
-    if(Op=="Cancel"){
-   if(CatalogEntryIsValid(c_gameCatalogAbil,Link+"Un")){
-   ord=Order(AbilityCommand(Link+"Un",0));
-   }else{
-   ord=Order(AbilityCommand(Link,1));
-   }
-   
+    if(Op=="0"){
+        ord=Order(AbilityCommand(Link,0));
     }
-    if(Op=="On"){
-   ord=OrderSetAutoCast(AbilityCommand(Link,0), true);
+    else if(Op=="Cancel"){
+        ord=Order(AbilityCommand(Link,1));
     }
-    if(Op=="Off"){
-   ord=OrderSetAutoCast(AbilityCommand(Link,0), false);
+    else if(Op=="On"){
+        ord=OrderSetAutoCast(AbilityCommand(Link,0), true);
+    }
+    else if(Op=="Off"){
+        ord=OrderSetAutoCast(AbilityCommand(Link,0), false);
     }
     return ord;
 }
@@ -12885,6 +12891,7 @@ void InitCustomTriggers(){
 }
 
 void libGAWT_InitCustomScript () {
+    GAWT_JassStateTableInit();
     GAw3_Def_Init();
     CreateUnitsForPlayer0();
     InitGlobalsWc3();
@@ -12892,6 +12899,272 @@ void libGAWT_InitCustomScript () {
 }
 
 // Functions
+string libGAWT_gf_ConvertAssetToId (string lp_path) {
+    // Variable Declarations
+    string lv_finalID;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_finalID = lp_path;
+
+    // Implementation
+    if ((StringContains(lv_finalID, ".", c_stringAnywhere, c_stringCase) == true)) {
+        lv_finalID = StringSub(EventChatMessage(false), 1, (StringFind(lv_finalID, ".", c_stringCase)-1));
+        while ((StringContains(lv_finalID, "\\", c_stringAnywhere, c_stringCase) == true)) {
+            lv_finalID = StringSub(lv_finalID, (StringFind(lv_finalID, "\\", c_stringCase)+1), StringLength(lv_finalID));
+        }
+    }
+
+    return lv_finalID;
+}
+
+fixed j_GetDestructableX (unit lp_d) {
+    // Automatic Variable Declarations
+    // Implementation
+    return PointGetX(UnitGetPosition(lp_d));
+}
+
+fixed j_GetDestructableY (unit lp_d) {
+    // Automatic Variable Declarations
+    // Implementation
+    return PointGetY(UnitGetPosition(lp_d));
+}
+
+void j_SetDestructableLife (unit lp_d, fixed lp_life) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetPropertyFixed(lp_d, c_unitPropLife, lp_life);
+}
+
+fixed j_GetDestructableLife (unit lp_d) {
+    // Automatic Variable Declarations
+    // Implementation
+    return UnitGetPropertyFixed(lp_d, c_unitPropLife, c_unitPropCurrent);
+}
+
+point j_Location (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    return Point(lp_x, lp_y);
+}
+
+void j_SetUnitPosition (unit lp_whichUnit, fixed lp_newX, fixed lp_newY) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetPosition(lp_whichUnit, Point(lp_newX, lp_newY), false);
+    UnitCreateEffectUnit(lp_whichUnit, "ClearOrderQueue", lp_whichUnit);
+}
+
+void j_SetUnitPositionLoc (unit lp_whichUnit, point lp_whichLocation) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetPosition(lp_whichUnit, lp_whichLocation, false);
+    UnitCreateEffectUnit(lp_whichUnit, "ClearOrderQueue", lp_whichUnit);
+}
+
+void j_SetUnitX (unit lp_whichUnit, fixed lp_newX) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetPosition(lp_whichUnit, Point(lp_newX, PointGetY(UnitGetPosition(lp_whichUnit))), true);
+}
+
+void j_SetUnitY (unit lp_whichUnit, fixed lp_newY) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetPosition(lp_whichUnit, Point(PointGetX(UnitGetPosition(lp_whichUnit)), lp_newY), true);
+}
+
+void j_SetUnitFacing (unit lp_whichUnit, fixed lp_facingAngle) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetFacing(lp_whichUnit, lp_facingAngle, 0.0);
+}
+
+void j_SetUnitFacingTimed (unit lp_whichUnit, fixed lp_facingAngle, fixed lp_duration) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitSetFacing(lp_whichUnit, lp_facingAngle, lp_duration);
+}
+
+fixed j_GetUnitX (unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    return PointGetX(UnitGetPosition(lp_whichUnit));
+}
+
+fixed j_GetUnitY (unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    return PointGetY(UnitGetPosition(lp_whichUnit));
+}
+
+point j_GetUnitLoc (unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    return UnitGetPosition(lp_whichUnit);
+}
+
+bool j_IsUnitPaused (unit lp_whichHero) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libNtve_gf_UnitIsPaused(lp_whichHero);
+}
+
+void j_SetUnitPathing (unit lp_whichUnit, bool lp_flag) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_flag == true)) {
+        UnitBehaviorRemove(lp_whichUnit, "SetUnitPathing", c_unitBehaviorCountAll);
+    }
+    else {
+        UnitBehaviorAdd(lp_whichUnit, "SetUnitPathing", lp_whichUnit, 1);
+    }
+}
+
+void j_StartSound (sound lp_soundHandle) {
+    // Automatic Variable Declarations
+    // Implementation
+    SoundSetOffset(lp_soundHandle, 0.0, c_soundOffsetStart);
+    SoundPause(lp_soundHandle, false);
+}
+
+void j_StopSound (sound lp_soundHandle, bool lp_killWhenDone, bool lp_fadeOut) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_killWhenDone == true)) {
+        SoundStop(SoundLastPlayed(), lp_fadeOut);
+    }
+    else {
+        SoundPause(lp_soundHandle, true);
+    }
+}
+
+void j_KillSoundWhenDone (sound lp_soundHandle) {
+    // Automatic Variable Declarations
+}
+
+void j_SetMapMusic (string lp_musicName, bool lp_random, int lp_index) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_random == true)) {
+        lp_index = c_soundtrackIndexAny;
+    }
+
+    SoundtrackPlay(PlayerGroupAll(), c_soundtrackCategoryMusic, (lp_musicName), c_soundtrackCueAny, lp_index, true);
+}
+
+void j_ClearMapMusic () {
+    // Automatic Variable Declarations
+    // Implementation
+    SoundtrackStop(PlayerGroupAll(), c_soundtrackCategoryMusic, true);
+}
+
+void j_PlayMusic (string lp_musicName) {
+    // Automatic Variable Declarations
+}
+
+void j_PlayMusicEx (string lp_musicName, int lp_frommsecs, int lp_fadeinmsecs) {
+    // Automatic Variable Declarations
+}
+
+void j_StopMusic (bool lp_fadeOut) {
+    // Automatic Variable Declarations
+}
+
+void j_ResumeMusic () {
+    // Automatic Variable Declarations
+}
+
+void j_PlayThematicMusic (string lp_musicFileName) {
+    // Variable Declarations
+    string lv_finalID;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_finalID = lp_musicFileName;
+
+    // Implementation
+    j_PlayThematicMusicEx(lp_musicFileName, 0);
+}
+
+void j_PlayThematicMusicEx (string lp_musicFileName, int lp_frommsecs) {
+    // Variable Declarations
+    string lv_finalID;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_finalID = libGAWT_gf_ConvertAssetToId(lp_musicFileName);
+
+    // Implementation
+    SoundtrackPause(PlayerGroupAll(), c_soundtrackCategoryMusic, true, true);
+    SoundPlayForPlayer(SoundLink((lv_finalID), c_soundIndexAny), c_maxPlayers, PlayerGroupAll(), 100.0, (lp_frommsecs/1000));
+    libGAWT_gv_thematicMusic = SoundLastPlayed();
+    TriggerExecute(libGAWT_gt__ThematicMusicFinishClearUp, true, false);
+}
+
+void j_EndThematicMusic () {
+    // Automatic Variable Declarations
+    // Implementation
+    SoundStop(libGAWT_gv_thematicMusic, true);
+    SoundtrackPause(PlayerGroupAll(), c_soundtrackCategoryMusic, false, true);
+}
+
+void j_SetMusicVolume (int lp_volume) {
+    // Automatic Variable Declarations
+}
+
+void j_SetMusicPlayPosition (int lp_millisecs) {
+    // Automatic Variable Declarations
+}
+
+void j_SetThematicMusicPlayPosition (int lp_millisecs) {
+    // Automatic Variable Declarations
+}
+
+void j_SetSoundDuration (sound lp_soundHandle, int lp_duration) {
+    // Automatic Variable Declarations
+}
+
+int j_GetSoundDuration (sound lp_soundHandle) {
+    // Automatic Variable Declarations
+    // Implementation
+    return 0;
+}
+
+int j_GetSoundFileDuration (string lp_musicFileName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return 0;
+}
+
+void j_VolumeGroupSetVolume (int lp_vgroup, fixed lp_scale) {
+    // Automatic Variable Declarations
+}
+
+void j_VolumeGroupReset () {
+    // Automatic Variable Declarations
+}
+
+bool j_GetSoundIsPlaying (sound lp_soundHandle) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_GetSoundIsLoading (sound lp_soundHandle) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+void j_RegisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+}
+
+void j_UnregisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+}
+
 int j_GetRandomInt (int lp_lowBound, int lp_highBound) {
     // Automatic Variable Declarations
     // Implementation
@@ -12951,6 +13224,118 @@ void j_SetGameDifficulty (int lp_whichdifficulty) {
         if (auto019DA7CB_var < 0) { break; }
         PlayerSetDifficulty(auto019DA7CB_var, (lp_whichdifficulty));
     }
+}
+
+bool j_IssuePointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y) {
+    // Variable Declarations
+    bool lv_val;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+
+    // Implementation
+    return j_IssuePointOrderLoc(lp_whichUnit, lp_order, Point(lp_x, lp_y));
+}
+
+bool j_IssuePointOrderLoc (unit lp_whichUnit, string lp_order, point lp_whichLocation) {
+    // Variable Declarations
+    order lv_order;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = GAw3_OrderStringToOrder(lp_order);
+
+    // Implementation
+    OrderSetTargetPoint(lv_order, lp_whichLocation);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
+}
+
+bool j_IssuePointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssuePointOrderByIdLoc (unit lp_whichUnit, int lp_order, point lp_whichLocation) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueInstantPointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueInstantPointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueInstantTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_IssueInstantTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+trigger j_CreateTrigger () {
+    // Automatic Variable Declarations
+    // Implementation
+    return null;
+}
+
+void j_DestroyTrigger (trigger lp_whichTrigger) {
+    // Automatic Variable Declarations
+    // Implementation
+    TriggerDestroy(lp_whichTrigger);
+}
+
+void j_ResetTrigger (trigger lp_whichTrigger) {
+    // Automatic Variable Declarations
+    // Implementation
+    TriggerResetCounts(lp_whichTrigger);
+}
+
+void j_EnableTrigger (trigger lp_whichTrigger) {
+    // Automatic Variable Declarations
+    // Implementation
+    TriggerEnable(lp_whichTrigger, true);
+}
+
+void j_DisableTrigger (trigger lp_whichTrigger) {
+    // Automatic Variable Declarations
+    // Implementation
+    TriggerEnable(lp_whichTrigger, false);
+}
+
+bool j_IsTriggerEnabled (trigger lp_whichTrigger) {
+    // Automatic Variable Declarations
+    // Implementation
+    return TriggerIsEnabled(lp_whichTrigger);
+}
+
+void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
+    // Automatic Variable Declarations
 }
 
 int j_ConvertRace (int lp_i) {
@@ -13217,19 +13602,19 @@ int j_ConvertPathingType (int lp_i) {
     return 0;
 }
 
-int j_OrderId (string lp_stgcnawliavybipc) {
+int j_OrderId (string lp_mfmmwfckwlfjbcrl) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_UnitId (string lp_gfojrunxfqcnjcvv) {
+int j_UnitId (string lp_yjwnarvstylxmabj) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_AbilityId (string lp_nactcuvnjywoeueu) {
+int j_AbilityId (string lp_kqciowffxabekbma) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
@@ -13873,12 +14258,6 @@ void j_RegionClearCellAtLoc (region lp_whichRegion, point lp_whichLocation) {
     // Automatic Variable Declarations
 }
 
-point j_Location (fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
 void j_RemoveLocation (point lp_whichLocation) {
     // Automatic Variable Declarations
 }
@@ -13927,44 +14306,6 @@ region j_GetWorldBounds () {
     // Automatic Variable Declarations
     // Implementation
     return null;
-}
-
-trigger j_CreateTrigger () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-void j_DestroyTrigger (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-}
-
-void j_ResetTrigger (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-}
-
-void j_EnableTrigger (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-}
-
-void j_DisableTrigger (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-}
-
-bool j_IsTriggerEnabled (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
-bool j_IsTriggerWaitOnSleeps (trigger lp_whichTrigger) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
 }
 
 unit j_GetFilterUnit () {
@@ -14218,7 +14559,7 @@ string j_GetSaveBasicFilename () {
     return null;
 }
 
-void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_kqxywuwdahrvpape, int lp_whichPlayerEvent) {
+void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_bayyxqgmdiwhlxdd, int lp_whichPlayerEvent) {
     // Automatic Variable Declarations
     // Implementation
 }
@@ -14760,28 +15101,6 @@ int j_GetDestructableTypeId (unit lp_d) {
     return 0;
 }
 
-fixed j_GetDestructableX (unit lp_d) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-fixed j_GetDestructableY (unit lp_d) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_SetDestructableLife (unit lp_d, fixed lp_life) {
-    // Automatic Variable Declarations
-}
-
-fixed j_GetDestructableLife (unit lp_d) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
 void j_SetDestructableMaxLife (unit lp_d, fixed lp_max) {
     // Automatic Variable Declarations
 }
@@ -15039,30 +15358,6 @@ void j_ShowUnit (unit lp_whichUnit, bool lp_show) {
 }
 
 void j_SetUnitState (unit lp_whichUnit, int lp_whichUnitState, fixed lp_newVal) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitX (unit lp_whichUnit, fixed lp_newX) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitY (unit lp_whichUnit, fixed lp_newY) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitPosition (unit lp_whichUnit, fixed lp_newX, fixed lp_newY) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitPositionLoc (unit lp_whichUnit, point lp_whichLocation) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitFacing (unit lp_whichUnit, fixed lp_facingAngle) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitFacingTimed (unit lp_whichUnit, fixed lp_facingAngle, fixed lp_duration) {
     // Automatic Variable Declarations
 }
 
@@ -15344,16 +15639,6 @@ void j_PauseUnit (unit lp_whichUnit, bool lp_flag) {
     // Automatic Variable Declarations
 }
 
-bool j_IsUnitPaused (unit lp_whichHero) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_SetUnitPathing (unit lp_whichUnit, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
 void j_ClearSelection () {
     // Automatic Variable Declarations
 }
@@ -15454,24 +15739,6 @@ bool j_UnitUseItemTarget (unit lp_whichUnit, unit lp_whichItem, unit lp_target) 
     // Automatic Variable Declarations
     // Implementation
     return false;
-}
-
-fixed j_GetUnitX (unit lp_whichUnit) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-fixed j_GetUnitY (unit lp_whichUnit) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-point j_GetUnitLoc (unit lp_whichUnit) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
 }
 
 fixed j_GetUnitFacing (unit lp_whichUnit) {
@@ -15849,66 +16116,6 @@ bool j_IssueImmediateOrder (unit lp_whichUnit, string lp_order) {
 }
 
 bool j_IssueImmediateOrderById (unit lp_whichUnit, int lp_order) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssuePointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssuePointOrderLoc (unit lp_whichUnit, string lp_order, point lp_whichLocation) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssuePointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssuePointOrderByIdLoc (unit lp_whichUnit, int lp_order, point lp_whichLocation) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueInstantPointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueInstantPointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueInstantTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueInstantTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
     // Automatic Variable Declarations
     // Implementation
     return false;
@@ -18255,110 +18462,6 @@ void j_AttachSoundToUnit (sound lp_soundHandle, unit lp_whichUnit) {
     // Automatic Variable Declarations
 }
 
-void j_StartSound (sound lp_soundHandle) {
-    // Automatic Variable Declarations
-}
-
-void j_StopSound (sound lp_soundHandle, bool lp_killWhenDone, bool lp_fadeOut) {
-    // Automatic Variable Declarations
-}
-
-void j_KillSoundWhenDone (sound lp_soundHandle) {
-    // Automatic Variable Declarations
-}
-
-void j_SetMapMusic (string lp_musicName, bool lp_random, int lp_index) {
-    // Automatic Variable Declarations
-}
-
-void j_ClearMapMusic () {
-    // Automatic Variable Declarations
-}
-
-void j_PlayMusic (string lp_musicName) {
-    // Automatic Variable Declarations
-}
-
-void j_PlayMusicEx (string lp_musicName, int lp_frommsecs, int lp_fadeinmsecs) {
-    // Automatic Variable Declarations
-}
-
-void j_StopMusic (bool lp_fadeOut) {
-    // Automatic Variable Declarations
-}
-
-void j_ResumeMusic () {
-    // Automatic Variable Declarations
-}
-
-void j_PlayThematicMusic (string lp_musicFileName) {
-    // Automatic Variable Declarations
-}
-
-void j_PlayThematicMusicEx (string lp_musicFileName, int lp_frommsecs) {
-    // Automatic Variable Declarations
-}
-
-void j_EndThematicMusic () {
-    // Automatic Variable Declarations
-}
-
-void j_SetMusicVolume (int lp_volume) {
-    // Automatic Variable Declarations
-}
-
-void j_SetMusicPlayPosition (int lp_millisecs) {
-    // Automatic Variable Declarations
-}
-
-void j_SetThematicMusicPlayPosition (int lp_millisecs) {
-    // Automatic Variable Declarations
-}
-
-void j_SetSoundDuration (sound lp_soundHandle, int lp_duration) {
-    // Automatic Variable Declarations
-}
-
-int j_GetSoundDuration (sound lp_soundHandle) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-int j_GetSoundFileDuration (string lp_musicFileName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_VolumeGroupSetVolume (int lp_vgroup, fixed lp_scale) {
-    // Automatic Variable Declarations
-}
-
-void j_VolumeGroupReset () {
-    // Automatic Variable Declarations
-}
-
-bool j_GetSoundIsPlaying (sound lp_soundHandle) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_GetSoundIsLoading (sound lp_soundHandle) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_RegisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-}
-
-void j_UnregisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-}
-
 actor j_AddWeatherEffect (region lp_where, int lp_effectID) {
     // Automatic Variable Declarations
     // Implementation
@@ -18783,6 +18886,27 @@ void j_Preloader (string lp_filename) {
 
 // Triggers
 //--------------------------------------------------------------------------------------------------
+// Trigger: _Thematic Music Finish Clear Up
+//--------------------------------------------------------------------------------------------------
+bool libGAWT_gt__ThematicMusicFinishClearUp_Func (bool testConds, bool runActions) {
+    // Automatic Variable Declarations
+    // Actions
+    if (!runActions) {
+        return true;
+    }
+
+    SoundWait(libGAWT_gv_thematicMusic, 0.0, c_soundOffsetEnd);
+    SoundtrackPause(PlayerGroupAll(), c_soundtrackCategoryMusic, false, true);
+    return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+void libGAWT_gt__ThematicMusicFinishClearUp_Init () {
+    libGAWT_gt__ThematicMusicFinishClearUp = TriggerCreate("libGAWT_gt__ThematicMusicFinishClearUp_Func");
+    TriggerEnable(libGAWT_gt__ThematicMusicFinishClearUp, false);
+}
+
+//--------------------------------------------------------------------------------------------------
 // Trigger: Custom Init
 //--------------------------------------------------------------------------------------------------
 bool libGAWT_gt_CustomInit_Func (bool testConds, bool runActions) {
@@ -18858,6 +18982,7 @@ void libGAWT_gt_UntitledTrigger001_Init () {
 }
 
 void libGAWT_InitTriggers () {
+    libGAWT_gt__ThematicMusicFinishClearUp_Init();
     libGAWT_gt_CustomInit_Init();
     libGAWT_gt_UntitledTrigger003_Init();
     libGAWT_gt_UntitledTrigger001_Init();
