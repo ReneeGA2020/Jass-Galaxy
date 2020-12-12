@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CUser id="InputKeys">
+        <Fields Id="Index" Type="Int" EditorColumn="1"/>
+        <Instances Id="[Default]"/>
+        <Instances Id="Shift"/>
+        <Instances Id="Control">
+            <Int Int="1">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Alt">
+            <Int Int="2">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="0">
+            <Int Int="3">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="1">
+            <Int Int="4">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="2">
+            <Int Int="5">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="3">
+            <Int Int="6">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="4">
+            <Int Int="7">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="5">
+            <Int Int="8">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="6">
+            <Int Int="9">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="7">
+            <Int Int="10">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="8">
+            <Int Int="11">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="9">
+            <Int Int="12">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="A">
+            <Int Int="13">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="B">
+            <Int Int="14">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="C">
+            <Int Int="15">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="D">
+            <Int Int="16">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="E">
+            <Int Int="17">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F">
+            <Int Int="18">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="G">
+            <Int Int="19">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="H">
+            <Int Int="20">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="I">
+            <Int Int="21">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="J">
+            <Int Int="22">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="K">
+            <Int Int="23">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="L">
+            <Int Int="24">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="M">
+            <Int Int="25">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="N">
+            <Int Int="26">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="O">
+            <Int Int="27">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="P">
+            <Int Int="28">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Q">
+            <Int Int="29">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="R">
+            <Int Int="30">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="S">
+            <Int Int="31">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="T">
+            <Int Int="32">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="U">
+            <Int Int="33">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="V">
+            <Int Int="34">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="W">
+            <Int Int="35">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="X ">
+            <Int Int="36">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Y">
+            <Int Int="37">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Z">
+            <Int Int="38">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Space">
+            <Int Int="39">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Grave">
+            <Int Int="40">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad0">
+            <Int Int="41">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad1">
+            <Int Int="42">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad2">
+            <Int Int="43">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad3">
+            <Int Int="44">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad4">
+            <Int Int="45">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad5">
+            <Int Int="46">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad6">
+            <Int Int="47">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad7">
+            <Int Int="48">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad8">
+            <Int Int="49">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPad9">
+            <Int Int="50">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPadPlus">
+            <Int Int="51">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPadMinus">
+            <Int Int="52">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPadMultiply">
+            <Int Int="53">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPadDivide ">
+            <Int Int="54">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumPadDecimal">
+            <Int Int="55">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Equals">
+            <Int Int="56">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Minus">
+            <Int Int="57">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="BracketOpen">
+            <Int Int="58">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="BracketClose">
+            <Int Int="59">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="BackSlash">
+            <Int Int="60">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="SemiColon">
+            <Int Int="61">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Apostrophe">
+            <Int Int="62">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Comma">
+            <Int Int="63">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Period">
+            <Int Int="64">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Slash">
+            <Int Int="65">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Escape">
+            <Int Int="66">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Enter">
+            <Int Int="67">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Backspace">
+            <Int Int="68">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Tab">
+            <Int Int="69">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Left">
+            <Int Int="70">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Up">
+            <Int Int="71">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Right">
+            <Int Int="72">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Down">
+            <Int Int="73">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Insert">
+            <Int Int="74">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Delete">
+            <Int Int="75">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Home">
+            <Int Int="76">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="End">
+            <Int Int="77">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="PageUp">
+            <Int Int="78">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="PageDown">
+            <Int Int="79">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="CapsLock">
+            <Int Int="80">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NumLock">
+            <Int Int="81">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="ScrollLock">
+            <Int Int="82">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="Pause">
+            <Int Int="83">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="PrintScreen">
+            <Int Int="84">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="NextTrack">
+            <Int Int="85">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="PrevTrack">
+            <Int Int="86">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F1">
+            <Int Int="87">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F2">
+            <Int Int="88">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F3">
+            <Int Int="89">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F4">
+            <Int Int="90">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F5">
+            <Int Int="91">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F6">
+            <Int Int="92">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F7">
+            <Int Int="93">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F8">
+            <Int Int="94">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F9">
+            <Int Int="95">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F10">
+            <Int Int="96">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F11">
+            <Int Int="97">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+        <Instances Id="F12">
+            <Int Int="98">
+                <Field Id="Index"/>
+            </Int>
+        </Instances>
+    </CUser>
+</Catalog>
