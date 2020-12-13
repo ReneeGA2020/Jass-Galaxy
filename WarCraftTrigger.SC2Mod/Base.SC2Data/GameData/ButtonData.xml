@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CButton id="CameraModelDummy" parent="War3_Button" art="Assets\Textures\Renee_war3_btnVillagerKid.dds"/>
+</Catalog>

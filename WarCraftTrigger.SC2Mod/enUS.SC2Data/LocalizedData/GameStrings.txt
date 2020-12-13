@@ -1,2 +1,10 @@
 ﻿Behavior/Name/SetUnitPathing=Set Unit Pathing
 DocInfo/DescLong=Completely devoid of any description whatsoever.
+Effect/Name/War3_UnitRemoveBuffs_Negative=War3 Unit Remove Buffs Negative
+Effect/Name/War3_UnitRemoveBuffs_Positive=War3 Unit Remove Buffs Positive
+Name/CameraModelDummy=Camera Model Dummy
+Param/Expression/lib_GAWT_982AE05E=Jass-Galaxy: Cannot do timed camera setup change.
+Param/Expression/lib_GAWT_B026F92F=Jass-Galaxy: Change of Property ~B~ not supported
+Param/Value/lib_GAWT_05963006=Jass-Galaxy: Cannot do timed camera setup targetPosition of  change.
+Tip/CameraModelDummy=Hire Camera Model Dummy
+Ubertip/CameraModelDummy=

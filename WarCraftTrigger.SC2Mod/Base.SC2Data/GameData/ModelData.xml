@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CModel id="CameraModelDummy" parent="War3_Unit" race="Critters">
+        <Model value="Assets\Units\Critters\War3_VillagerKid\War3_VillagerKid.m3"/>
+        <Events>
+            <Anim value="Death"/>
+            <Type value="Sound"/>
+            <Time value="0.067000"/>
+            <Payload value="SND_DVLC"/>
+        </Events>
+        <SelectionRadius value="0.208333"/>
+        <SquibTypeDefault value="Flesh"/>
+    </CModel>
+    <CModel id="CameraModelDummy@Portrait" parent="War3_Unit" race="Critters">
+        <Model value="Assets\Units\Critters\War3_VillagerKid_Portrait\War3_VillagerKid_Portrait.m3"/>
+    </CModel>
+</Catalog>

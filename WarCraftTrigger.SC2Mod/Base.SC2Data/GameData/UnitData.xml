@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CUnit id="CameraModelDummy" parent="SMCAMERA" defType="MEDIUM">
+        <Name value="Name/CameraModelDummy"/>
+        <Description value="Ubertip/CameraModelDummy"/>
+        <Mob value="Warcraft"/>
+        <FlagArray index="Turnable" value="0"/>
+        <FlagArray index="Movable" value="0"/>
+        <FlagArray index="Unclickable" value="1"/>
+        <FlagArray index="Unhighlightable" value="1"/>
+        <FlagArray index="Uncursorable" value="1"/>
+        <FlagArray index="Undetectable" value="1"/>
+        <FlagArray index="Unradarable" value="1"/>
+        <FlagArray index="UseLineOfSight" value="0"/>
+        <FlagArray index="Invulnerable" value="1"/>
+        <FlagArray index="NoScore" value="1"/>
+        <FlagArray index="IgnoreTerrainZInit" value="0"/>
+        <FlagArray index="NoDeathEvent" value="1"/>
+        <FlagArray index="ShowResources" value="0"/>
+        <FlagArray index="Unstoppable" value="1"/>
+        <FlagArray index="IgnoreAttackAlert" value="1"/>
+        <FlagArray index="PlayerRevivable" value="0"/>
+        <FlagArray index="AIMakeIgnore" value="1"/>
+        <FlagArray index="CameraFollow" value="0"/>
+        <FlagArray index="NeverThink" value="1"/>
+        <PlaneArray index="Ground" value="0"/>
+        <Collide index="Ground" value="0"/>
+        <Collide index="Small" value="0"/>
+        <OccludeHeight value="0"/>
+        <EditorCategories value="ObjectType:Unit,ObjectFamily:Campaign"/>
+        <KillDisplay value="Never"/>
+        <RankDisplay value="Never"/>
+    </CUnit>
+</Catalog>

@@ -1,5 +1,11 @@
 ﻿Behavior/EditorPrefix/SetUnitPathing=Global -
 Behavior/EditorSuffix/SetUnitPathing=(Trigger)
+Effect/EditorPrefix/War3_UnitRemoveBuffs_Negative=Global -
+Effect/EditorPrefix/War3_UnitRemoveBuffs_Positive=Global -
+Effect/EditorSuffix/War3_UnitRemoveBuffs_Negative=(Trigger)
+Effect/EditorSuffix/War3_UnitRemoveBuffs_Positive=(Trigger)
+Model/Name/CameraModelDummy@Portrait=Portrait
 Name/SetUnitPathing=Set Unit Pathing
+RequirementNode/Name/CameraModelDummy@Count=Count
 Sound/Name/MusicThemeOrc=MusicThemeOrc
 User/Name/InputKeys=Inpu tKeys

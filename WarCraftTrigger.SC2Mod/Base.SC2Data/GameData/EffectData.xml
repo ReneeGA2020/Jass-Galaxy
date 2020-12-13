@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CEffectRemoveBehavior id="War3_UnitRemoveBuffs_Positive">
+        <BehaviorCategories index="Magic" value="1"/>
+        <BehaviorCategories index="Physical" value="1"/>
+        <BehaviorCategories index="Aura" value="1"/>
+        <BehaviorCategories index="TimedLife" value="1"/>
+        <BehaviorAlignment value="Positive"/>
+    </CEffectRemoveBehavior>
+    <CEffectRemoveBehavior id="War3_UnitRemoveBuffs_Negative">
+        <BehaviorCategories index="Magic" value="1"/>
+        <BehaviorCategories index="Physical" value="1"/>
+        <BehaviorCategories index="Aura" value="1"/>
+        <BehaviorCategories index="TimedLife" value="1"/>
+        <BehaviorAlignment value="Negative"/>
+    </CEffectRemoveBehavior>
+</Catalog>

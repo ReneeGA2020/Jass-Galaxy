@@ -1,4 +1,5 @@
 include "TriggerLibs/NativeLib"
+include "TriggerLibs/LibertyLib"
 include "TriggerLibs/WarClassicSystem"
 
 include "LibGAWT_h"
@@ -9,6 +10,7 @@ include "LibGAWT_h"
 // External Library Initialization
 void libGAWT_InitLibraries () {
     libNtve_InitVariables();
+    libLbty_InitVariables();
     libGAwX_InitVariables();
 }
 
@@ -22,18 +24,13 @@ void libGAWT_InitVariables () {
 
     libGAWT_InitVariables_completed = true;
 
+    libGAWT_gv_war3_mapOrigin = Point(0.0, 0.0);
     libGAWT_gv_jassStateTable = DataTableInstanceLastCreated();
+    libGAWT_gv_j_lastCreatedSound.lv_transmission = c_invalidTransmissionId;
+    libGAWT_gv_j_lastCreatedSound.lv_volume = 100.0;
 }
 
 // Custom Script
-//--------------------------------------------------------------------------------------------------
-// Custom Script: JassStateTableInit
-//--------------------------------------------------------------------------------------------------
-void GAWT_JassStateTableInit(){
-DataTableInstanceCreate();
-libGAWT_gv_jassStateTable=DataTableInstanceLastCreated();
-}
-
 //--------------------------------------------------------------------------------------------------
 // Custom Script: TypeDef
 //--------------------------------------------------------------------------------------------------
@@ -643,6 +640,28 @@ void GAw3_Def_Init(){
 }
 
 //--------------------------------------------------------------------------------------------------
+// Custom Script: JassStateTableInit
+//--------------------------------------------------------------------------------------------------
+void GAWT_JassStateTableInit(){
+DataTableInstanceCreate();
+libGAWT_gv_jassStateTable=DataTableInstanceLastCreated();
+}
+
+//--------------------------------------------------------------------------------------------------
+// Custom Script: For Group (Custom Script)
+//--------------------------------------------------------------------------------------------------
+void j_ForGroup( unitgroup whichGroup, code callback ){
+    int c=UnitGroupCount(whichGroup,c_unitCountAll);
+    int i;
+    for(i=1;i<=c;i+=1){
+        GAw3_EnumUnitPush();
+        GAw3_EnumUnitSet(UnitGroupUnit(whichGroup,i));
+        callback();
+        GAw3_EnumUnitPop();
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
 // Custom Script: Common.j (Consts)
 //--------------------------------------------------------------------------------------------------
     volumegroup        SOUND_VOLUMEGROUP_UNITMOVEMENT      = c_soundCategoryMovement;
@@ -1180,13 +1199,13 @@ void GAw3_Def_Init(){
 //===================================================
 // Animatable Camera Fields
 //===================================================
-    camerafield CAMERA_FIELD_TARGET_DISTANCE       = ConvertCameraField(0);
-    camerafield CAMERA_FIELD_FARZ                  = ConvertCameraField(1);
-    camerafield CAMERA_FIELD_ANGLE_OF_ATTACK       = ConvertCameraField(2);
-    camerafield CAMERA_FIELD_FIELD_OF_VIEW         = ConvertCameraField(3);
-    camerafield CAMERA_FIELD_ROLL                  = ConvertCameraField(4);
-    camerafield CAMERA_FIELD_ROTATION              = ConvertCameraField(5);
-    camerafield CAMERA_FIELD_ZOFFSET               = ConvertCameraField(6);
+    camerafield CAMERA_FIELD_TARGET_DISTANCE       = c_cameraValueDistance;
+    camerafield CAMERA_FIELD_FARZ                  = c_cameraValueFarClip;
+    camerafield CAMERA_FIELD_ANGLE_OF_ATTACK       = c_cameraValuePitch;
+    camerafield CAMERA_FIELD_FIELD_OF_VIEW         = c_cameraValueFieldOfView;
+    camerafield CAMERA_FIELD_ROLL                  = c_cameraValueRoll;
+    camerafield CAMERA_FIELD_ROTATION              = c_cameraValueYaw;
+    camerafield CAMERA_FIELD_ZOFFSET               = c_cameraValueHeightOffset;
     blendmode   BLEND_MODE_NONE                    = ConvertBlendMode(0);
     blendmode   BLEND_MODE_DONT_CARE               = ConvertBlendMode(0);
     blendmode   BLEND_MODE_KEYALPHA                = ConvertBlendMode(1);
@@ -12891,14 +12910,154 @@ void InitCustomTriggers(){
 }
 
 void libGAWT_InitCustomScript () {
-    GAWT_JassStateTableInit();
     GAw3_Def_Init();
+    GAWT_JassStateTableInit();
     CreateUnitsForPlayer0();
     InitGlobalsWc3();
     InitCustomTriggers();
 }
 
 // Functions
+void libGAWT_gf_SetWar3MapOrigin (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    libGAWT_gv_war3_mapOrigin = Point(lp_x, lp_y);
+    libGAWT_gv_war3_mapOriginX = lp_x;
+    libGAWT_gv_war3_mapOriginY = lp_y;
+    libGAWT_gv_war3_mapOriginXY[libGAWT_gv__X] = lp_x;
+    libGAWT_gv_war3_mapOriginXY[libGAWT_gv__Y] = lp_y;
+}
+
+fixed libGAWT_gf_ConvertWar3Distance (fixed lp_inDistance) {
+    // Automatic Variable Declarations
+    // Implementation
+    return (lp_inDistance/64);
+}
+
+fixed libGAWT_gf_ConvertWar3XY (fixed lp_value, int lp_xY) {
+    // Automatic Variable Declarations
+    // Implementation
+    return ((lp_value - libGAWT_gv_war3_mapOriginXY[lp_xY])/64);
+}
+
+fixed libGAWT_gf_ConvertWar3X (fixed lp_x) {
+    // Automatic Variable Declarations
+    // Implementation
+    return ((lp_x - libGAWT_gf_War3MapOriginX())/64);
+}
+
+fixed libGAWT_gf_ConvertWar3Y (fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    return ((lp_y - libGAWT_gf_War3MapOriginY())/64);
+}
+
+point libGAWT_gf_ConvertWar3Point (point lp_location) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gf_ConvertWar3PointXY(PointGetX(lp_location), PointGetY(lp_location));
+}
+
+point libGAWT_gf_ConvertWar3PointXY (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    return Point(libGAWT_gf_ConvertWar3X(lp_x), libGAWT_gf_ConvertWar3Y(lp_y));
+}
+
+point libGAWT_gf_ConvertWar3PointXYZ (fixed lp_x, fixed lp_y, fixed lp_z) {
+    // Variable Declarations
+    point lv_point;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_point = Point(libGAWT_gf_ConvertWar3X(lp_x), libGAWT_gf_ConvertWar3Y(lp_y));
+
+    // Implementation
+    PointSetHeight(lv_point, libGAWT_gf_ConvertWar3Distance(lp_z));
+    return lv_point;
+}
+
+fixed libGAWT_gf_ConvertSC2DistanceToWar3Distance (fixed lp_inDistance) {
+    // Automatic Variable Declarations
+    // Implementation
+    return (lp_inDistance*64);
+}
+
+fixed libGAWT_gf_ConvertSC2XYToWar3XY (fixed lp_value, int lp_xY) {
+    // Automatic Variable Declarations
+    // Implementation
+    return (lp_value*libGAWT_gv_c_war3distanceScale+libGAWT_gv_war3_mapOriginXY[lp_xY]);
+}
+
+fixed libGAWT_gf_ConvertSC2PointXYToWar3XY (point lp_point, int lp_xY) {
+    // Automatic Variable Declarations
+    // Implementation
+    return (libGAWT_gf_PointGetX(lp_point, lp_xY)*libGAWT_gv_c_war3distanceScale+libGAWT_gv_war3_mapOriginXY[lp_xY]);
+}
+
+point libGAWT_gf_ConvertSC2PointToWar3Point (point lp_location) {
+    // Automatic Variable Declarations
+    // Implementation
+    return Point(libGAWT_gf_ConvertSC2XYToWar3XY(libGAWT_gf_PointGetX(lp_location, libGAWT_gv__X), libGAWT_gv__X), libGAWT_gf_ConvertSC2XYToWar3XY(libGAWT_gf_PointGetX(lp_location, libGAWT_gv__Y), libGAWT_gv__Y));
+}
+
+fixed libGAWT_gf_RegulateAngle0360 (fixed lp_angle) {
+    // Variable Declarations
+    fixed lv_newAngle;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_newAngle = ModF(lp_angle, 360.0);
+
+    // Implementation
+    if ((lv_newAngle < 0.0)) {
+        return (lv_newAngle+360);
+    }
+
+    return lv_newAngle;
+}
+
+fixed libGAWT_gf_ConvertWar3Rotation (fixed lp_rotation) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gf_RegulateAngle0360((lp_rotation+90));
+}
+
+fixed libGAWT_gf_ConvertRadiansToDegrees (fixed lp_radians) {
+    // Automatic Variable Declarations
+    // Implementation
+    return (lp_radians*57.2957795);
+}
+
+void libGAWT_gf_SimpleAddRemoveBehavior (string lp_behavior, bool lp_add, unit lp_unit) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_add == true)) {
+        UnitBehaviorAdd(lp_unit, lp_behavior, lp_unit, 1);
+    }
+    else {
+        UnitBehaviorRemove(lp_unit, lp_behavior, c_unitBehaviorCountAll);
+    }
+}
+
+order libGAWT_gf_ConvertWar3OrderIdToOrder (int lp_orderId) {
+    // Automatic Variable Declarations
+    // Implementation
+    return Order(AbilityCommand((GAw3_IntToASCII4(lp_orderId)), 0));
+}
+
+fixed libGAWT_gf_War3MapOriginX () {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gv_war3_mapOriginXY[libGAWT_gv__X];
+}
+
+fixed libGAWT_gf_War3MapOriginY () {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gv_war3_mapOriginXY[libGAWT_gv__Y];
+}
+
 string libGAWT_gf_ConvertAssetToId (string lp_path) {
     // Variable Declarations
     string lv_finalID;
@@ -12918,16 +13077,347 @@ string libGAWT_gf_ConvertAssetToId (string lp_path) {
     return lv_finalID;
 }
 
+fixed libGAWT_gf_PointGetX (point lp_p, int lp_xY) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_xY == libGAWT_gv__X)) {
+        return PointGetX(lp_p);
+    }
+
+    return PointGetY(lp_p);
+}
+
+void j_UnitRemoveBuffs (unit lp_whichUnit, bool lp_removePositive, bool lp_removeNegative) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_removePositive == true)) {
+        UnitCreateEffectUnit(lp_whichUnit, "War3_UnitRemoveBuffs_Positive", lp_whichUnit);
+    }
+
+    if ((lp_removeNegative == true)) {
+        UnitCreateEffectUnit(lp_whichUnit, "War3_UnitRemoveBuffs_Negative", lp_whichUnit);
+    }
+
+}
+
+void j_SetCameraPosition (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y), 0.0, -1, 100.0, false);
+}
+
+void j_SetCameraQuickPosition (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    UIAlertPoint("Trigger", j_GetLocalPlayer(), StringToText(""), null, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
+}
+
+void j_SetCameraBounds (fixed lp_x1, fixed lp_y1, fixed lp_x2, fixed lp_y2, fixed lp_x3, fixed lp_y3, fixed lp_x4, fixed lp_y4) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetBounds(PlayerGroupAll(), RegionRect(libGAWT_gf_ConvertWar3X(lp_x1), libGAWT_gf_ConvertWar3Y(lp_y1), libGAWT_gf_ConvertWar3X(lp_x3), libGAWT_gf_ConvertWar3Y(lp_y3)), true);
+}
+
+void j_StopCamera () {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), CameraGetTarget(j_GetLocalPlayer()), 0.0, -1, 100.0, false);
+}
+
+void j_ResetToGameCamera (fixed lp_duration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetData(PlayerGroupAll(), "Dflt");
+}
+
+void j_PanCameraTo (fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y), 0.0, -1, 100.0, false);
+}
+
+void j_PanCameraToTimed (fixed lp_x, fixed lp_y, fixed lp_duration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y), lp_duration, -1, 100.0, true);
+}
+
+void j_PanCameraToWithZ (fixed lp_x, fixed lp_y, fixed lp_zOffsetDest) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), libNtve_gf_PointFromXYZ(lp_x, lp_y, lp_zOffsetDest), 0.0, -1, 100.0, true);
+}
+
+void j_PanCameraToTimedWithZ (fixed lp_x, fixed lp_y, fixed lp_zOffsetDest, fixed lp_duration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraPan(j_GetLocalPlayer(), libGAWT_gf_ConvertWar3PointXYZ(lp_x, lp_y, lp_zOffsetDest), lp_duration, -1, 100.0, true);
+}
+
+void j_SetCinematicCamera (string lp_cameraModelFile) {
+    // Automatic Variable Declarations
+    // Deprecated
+    CameraUseModel(j_GetLocalPlayer(), UnitLastCreated(), null, 0.0);
+}
+
+void j_SetCameraRotateMode (fixed lp_x, fixed lp_y, fixed lp_radiansToSweep, fixed lp_duration) {
+    // Variable Declarations
+    int lv_player;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_player = j_GetLocalPlayer();
+
+    // Implementation
+    CameraSetValue(lv_player, c_cameraValueYaw, (CameraGetYaw(lv_player)+libGAWT_gf_ConvertRadiansToDegrees(lp_radiansToSweep)), lp_duration, -1, 10.0);
+}
+
+void j_SetCameraField (int lp_whichField, fixed lp_value, fixed lp_duration) {
+    // Variable Declarations
+    fixed lv_newValue;
+
+    // Automatic Variable Declarations
+    int auto098151BC_val;
+
+    // Variable Initialization
+
+    // Implementation
+    auto098151BC_val = lp_whichField;
+    if (auto098151BC_val == c_cameraValueFieldOfView) {
+        lv_newValue = (lp_value/libGAWT_gv_c_war3fovScale);
+    }
+    else if (auto098151BC_val == c_cameraValuePitch) {
+        lv_newValue = libGAWT_gf_RegulateAngle0360((360-lp_value));
+    }
+    else if (auto098151BC_val == c_cameraValueYaw) {
+        lv_newValue = libGAWT_gf_ConvertWar3Rotation(lp_value);
+    }
+    else if (auto098151BC_val == c_cameraValueRoll) {
+        lv_newValue = libGAWT_gf_RegulateAngle0360(lp_value);
+    }
+    else {
+        lv_newValue = libGAWT_gf_ConvertWar3Distance(lp_value);
+    }
+    CameraSetValue(j_GetLocalPlayer(), lp_whichField, lv_newValue, lp_duration, -1, 10.0);
+}
+
+void j_AdjustCameraField (int lp_whichField, fixed lp_offset, fixed lp_duration) {
+    // Variable Declarations
+    fixed lv_oldValue;
+    fixed lv_newValue;
+
+    // Automatic Variable Declarations
+    int auto02A74F59_val;
+
+    // Variable Initialization
+
+    // Implementation
+    auto02A74F59_val = lp_whichField;
+    if (auto02A74F59_val == c_cameraValuePitch) {
+        lv_oldValue = CameraGetPitch(j_GetLocalPlayer());
+        lv_newValue = libGAWT_gf_RegulateAngle0360((360-lp_offset+lv_oldValue));
+        CameraSetValue(j_GetLocalPlayer(), lp_whichField, lv_newValue, lp_duration, -1, 10.0);
+    }
+    else if (auto02A74F59_val == c_cameraValueYaw) {
+        lv_oldValue = CameraGetYaw(j_GetLocalPlayer());
+        lv_newValue = libGAWT_gf_RegulateAngle0360((libGAWT_gf_ConvertWar3Rotation(lp_offset)+lv_oldValue));
+        CameraSetValue(j_GetLocalPlayer(), lp_whichField, lv_newValue, lp_duration, -1, 10.0);
+    }
+    else if (auto02A74F59_val == c_cameraValueDistance) {
+        lv_oldValue = CameraGetDistance(j_GetLocalPlayer());
+        lv_newValue = (libGAWT_gf_ConvertWar3Distance(lp_offset)+lv_oldValue);
+        CameraSetValue(j_GetLocalPlayer(), lp_whichField, lv_newValue, lp_duration, -1, 10.0);
+    }
+    else {
+        TextExpressionSetToken("Param/Expression/lib_GAWT_B026F92F", "B", IntToText((lp_whichField)));
+        TriggerDebugOutput(1, TextExpressionAssemble("Param/Expression/lib_GAWT_B026F92F"), true);
+    }
+}
+
+void j_SetCameraTargetController (unit lp_whichUnit, fixed lp_xoffset, fixed lp_yoffset, bool lp_inheritOrientation) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_inheritOrientation == true)) {
+        CameraFollowUnitGroup(j_GetLocalPlayer(), libNtve_gf_ConvertUnitToUnitGroup(lp_whichUnit), true, false);
+    }
+    else {
+        CameraLookAtUnit(j_GetLocalPlayer(), lp_whichUnit);
+    }
+}
+
+void j_SetCameraOrientController (unit lp_whichUnit, fixed lp_xoffset, fixed lp_yoffset) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraFollowUnitGroup(j_GetLocalPlayer(), libNtve_gf_ConvertUnitToUnitGroup(lp_whichUnit), true, false);
+}
+
+camerainfo j_CreateCameraSetup () {
+    // Automatic Variable Declarations
+    // Implementation
+    return CameraInfoDefault();
+}
+
+void j_CameraSetupSetField (camerainfo lp_whichSetup, int lp_whichField, fixed lp_value, fixed lp_duration) {
+    // Variable Declarations
+    fixed lv_newValue;
+
+    // Automatic Variable Declarations
+    int autoB5D805AE_val;
+
+    // Variable Initialization
+
+    // Implementation
+    autoB5D805AE_val = lp_whichField;
+    if (autoB5D805AE_val == c_cameraValueFieldOfView) {
+        lv_newValue = (lp_value/libGAWT_gv_c_war3fovScale);
+    }
+    else if (autoB5D805AE_val == c_cameraValuePitch) {
+        lv_newValue = libGAWT_gf_RegulateAngle0360((360-lp_value));
+    }
+    else if (autoB5D805AE_val == c_cameraValueYaw) {
+        lv_newValue = libGAWT_gf_ConvertWar3Rotation(lp_value);
+    }
+    else if (autoB5D805AE_val == c_cameraValueRoll) {
+        lv_newValue = libGAWT_gf_RegulateAngle0360(lp_value);
+    }
+    else {
+        lv_newValue = libGAWT_gf_ConvertWar3Distance(lp_value);
+    }
+    if ((lp_duration > 0.1)) {
+        TriggerDebugOutput(1, TextExpressionAssemble("Param/Expression/lib_GAWT_982AE05E"), true);
+    }
+
+    CameraInfoSetValue(lp_whichSetup, lp_whichField, lv_newValue);
+}
+
+fixed j_CameraSetupGetField (camerainfo lp_whichSetup, int lp_whichField) {
+    // Variable Declarations
+    fixed lv_sc2Value;
+    fixed lv_war3Value;
+
+    // Automatic Variable Declarations
+    int autoB3BD93A6_val;
+
+    // Variable Initialization
+    lv_sc2Value = CameraInfoGetValue(lp_whichSetup, lp_whichField);
+
+    // Implementation
+    autoB3BD93A6_val = lp_whichField;
+    if (autoB3BD93A6_val == c_cameraValueFieldOfView) {
+        lv_war3Value = (lv_sc2Value*libGAWT_gv_c_war3fovScale);
+    }
+    else if (autoB3BD93A6_val == c_cameraValuePitch) {
+        lv_war3Value = (360-lv_sc2Value);
+    }
+    else if (autoB3BD93A6_val == c_cameraValueYaw) {
+        lv_war3Value = (lv_sc2Value-90);
+    }
+    else if (autoB3BD93A6_val == c_cameraValueRoll) {
+        lv_war3Value = lv_sc2Value;
+    }
+    else {
+        lv_war3Value = (lv_sc2Value*64);
+    }
+    return lv_war3Value;
+}
+
+void j_CameraSetupSetDestPosition (camerainfo lp_whichSetup, fixed lp_x, fixed lp_y, fixed lp_duration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraInfoSetTarget(lp_whichSetup, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
+    if ((lp_duration > 0.1)) {
+        TriggerDebugOutput(1, StringExternal("Param/Value/lib_GAWT_05963006"), true);
+    }
+
+}
+
+point j_CameraSetupGetDestPositionLoc (camerainfo lp_whichSetup) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gf_ConvertSC2PointToWar3Point(CameraInfoGetTarget(lp_whichSetup));
+}
+
+fixed j_CameraSetupGetDestPositionX (camerainfo lp_whichSetup) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gf_PointGetX(j_CameraSetupGetDestPositionLoc(lp_whichSetup), libGAWT_gv__X);
+}
+
+fixed j_CameraSetupGetDestPositionY (camerainfo lp_whichSetup) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libGAWT_gf_PointGetX(j_CameraSetupGetDestPositionLoc(lp_whichSetup), libGAWT_gv__Y);
+}
+
+void j_CameraSetupApply (camerainfo lp_whichSetup, bool lp_doPan, bool lp_panTimed) {
+    // Variable Declarations
+    int lv_untitledVariable001;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+
+    // Implementation
+    CameraApplyInfo(j_GetLocalPlayer(), lp_whichSetup, 0.0, -1, 10.0, true);
+}
+
+void j_CameraSetupApplyWithZ (camerainfo lp_whichSetup, fixed lp_zDestOffset) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraApplyInfo(j_GetLocalPlayer(), lp_whichSetup, 0.0, -1, 10.0, true);
+    j_SetCameraField(c_cameraValueHeightOffset, lp_zDestOffset, 0.0);
+}
+
+void j_CameraSetupApplyForceDuration (camerainfo lp_whichSetup, bool lp_doPan, fixed lp_forceDuration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraApplyInfo(j_GetLocalPlayer(), lp_whichSetup, lp_forceDuration, -1, 10.0, true);
+}
+
+void j_CameraSetupApplyForceDurationWithZ (camerainfo lp_whichSetup, fixed lp_zDestOffset, fixed lp_forceDuration) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraApplyInfo(j_GetLocalPlayer(), lp_whichSetup, lp_forceDuration, -1, 10.0, true);
+    j_SetCameraField(c_cameraValueHeightOffset, lp_zDestOffset, lp_forceDuration);
+}
+
+void j_CameraSetTargetNoise (fixed lp_mag, fixed lp_velocity) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetValue(j_GetLocalPlayer(), c_cameraValueDepthOfField, lp_mag, 0.0, -1, 10.0);
+}
+
+void j_CameraSetSourceNoise (fixed lp_mag, fixed lp_velocity) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetValue(j_GetLocalPlayer(), c_cameraValueFocalDepth, lp_mag, 0.0, -1, 10.0);
+}
+
+void j_CameraSetTargetNoiseEx (fixed lp_mag, fixed lp_velocity, bool lp_vertOnly) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetValue(j_GetLocalPlayer(), c_cameraValueDepthOfField, lp_mag, 0.0, -1, 10.0);
+}
+
+void j_CameraSetSourceNoiseEx (fixed lp_mag, fixed lp_velocity, bool lp_vertOnly) {
+    // Automatic Variable Declarations
+    // Implementation
+    CameraSetValue(j_GetLocalPlayer(), c_cameraValueFocalDepth, lp_mag, 0.0, -1, 10.0);
+}
+
+void j_CameraSetSmoothingFactor (fixed lp_factor) {
+    // Automatic Variable Declarations
+}
+
 fixed j_GetDestructableX (unit lp_d) {
     // Automatic Variable Declarations
     // Implementation
-    return PointGetX(UnitGetPosition(lp_d));
+    return libGAWT_gf_ConvertSC2PointXYToWar3XY(UnitGetPosition(lp_d), libGAWT_gv__X);
 }
 
 fixed j_GetDestructableY (unit lp_d) {
     // Automatic Variable Declarations
     // Implementation
-    return PointGetY(UnitGetPosition(lp_d));
+    return libGAWT_gf_ConvertSC2PointXYToWar3XY(UnitGetPosition(lp_d), libGAWT_gv__Y);
 }
 
 void j_SetDestructableLife (unit lp_d, fixed lp_life) {
@@ -12942,6 +13432,38 @@ fixed j_GetDestructableLife (unit lp_d) {
     return UnitGetPropertyFixed(lp_d, c_unitPropLife, c_unitPropCurrent);
 }
 
+void j_SetDoodadAnimation (fixed lp_x, fixed lp_y, fixed lp_radius, int lp_doodadID, bool lp_nearestOnly, string lp_animName, bool lp_animRandom) {
+    // Variable Declarations
+    int lv_flag;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_flag = 0;
+
+    // Implementation
+    if ((lp_animRandom == true)) {
+        lv_flag = c_animFlagRandomStartOffset;
+    }
+
+    libNtve_gf_PlayAnimationOnDoodadsInRegion(RegionCircle(Point(lp_x, lp_y), lp_radius), (GAw3_IntToASCII4(lp_doodadID)), c_animNameDefault, GAw3_ConvertAnimName(lp_animName), lv_flag, c_animTimeDefault);
+}
+
+void j_SetDoodadAnimationRect (region lp_r, int lp_doodadID, string lp_animName, bool lp_animRandom) {
+    // Variable Declarations
+    int lv_flag;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_flag = 0;
+
+    // Implementation
+    if ((lp_animRandom == true)) {
+        lv_flag = c_animFlagRandomStartOffset;
+    }
+
+    libNtve_gf_PlayAnimationOnDoodadsInRegion(lp_r, (GAw3_IntToASCII4(lp_doodadID)), c_animNameDefault, GAw3_ConvertAnimName(lp_animName), lv_flag, c_animTimeDefault);
+}
+
 point j_Location (fixed lp_x, fixed lp_y) {
     // Automatic Variable Declarations
     // Implementation
@@ -12951,27 +13473,27 @@ point j_Location (fixed lp_x, fixed lp_y) {
 void j_SetUnitPosition (unit lp_whichUnit, fixed lp_newX, fixed lp_newY) {
     // Automatic Variable Declarations
     // Implementation
-    UnitSetPosition(lp_whichUnit, Point(lp_newX, lp_newY), false);
+    UnitSetPosition(lp_whichUnit, libGAWT_gf_ConvertWar3PointXY(lp_newX, lp_newY), false);
     UnitCreateEffectUnit(lp_whichUnit, "ClearOrderQueue", lp_whichUnit);
 }
 
 void j_SetUnitPositionLoc (unit lp_whichUnit, point lp_whichLocation) {
     // Automatic Variable Declarations
     // Implementation
-    UnitSetPosition(lp_whichUnit, lp_whichLocation, false);
+    UnitSetPosition(lp_whichUnit, libGAWT_gf_ConvertWar3Point(lp_whichLocation), false);
     UnitCreateEffectUnit(lp_whichUnit, "ClearOrderQueue", lp_whichUnit);
 }
 
 void j_SetUnitX (unit lp_whichUnit, fixed lp_newX) {
     // Automatic Variable Declarations
     // Implementation
-    UnitSetPosition(lp_whichUnit, Point(lp_newX, PointGetY(UnitGetPosition(lp_whichUnit))), true);
+    UnitSetPosition(lp_whichUnit, Point(libGAWT_gf_ConvertWar3XY(lp_newX, libGAWT_gv__X), PointGetY(UnitGetPosition(lp_whichUnit))), true);
 }
 
 void j_SetUnitY (unit lp_whichUnit, fixed lp_newY) {
     // Automatic Variable Declarations
     // Implementation
-    UnitSetPosition(lp_whichUnit, Point(PointGetX(UnitGetPosition(lp_whichUnit)), lp_newY), true);
+    UnitSetPosition(lp_whichUnit, Point(PointGetX(UnitGetPosition(lp_whichUnit)), libGAWT_gf_ConvertWar3XY(lp_newY, libGAWT_gv__Y)), true);
 }
 
 void j_SetUnitFacing (unit lp_whichUnit, fixed lp_facingAngle) {
@@ -12989,19 +13511,19 @@ void j_SetUnitFacingTimed (unit lp_whichUnit, fixed lp_facingAngle, fixed lp_dur
 fixed j_GetUnitX (unit lp_whichUnit) {
     // Automatic Variable Declarations
     // Implementation
-    return PointGetX(UnitGetPosition(lp_whichUnit));
+    return libGAWT_gf_ConvertSC2PointXYToWar3XY(UnitGetPosition(lp_whichUnit), libGAWT_gv__X);
 }
 
 fixed j_GetUnitY (unit lp_whichUnit) {
     // Automatic Variable Declarations
     // Implementation
-    return PointGetY(UnitGetPosition(lp_whichUnit));
+    return libGAWT_gf_ConvertSC2PointXYToWar3XY(UnitGetPosition(lp_whichUnit), libGAWT_gv__Y);
 }
 
 point j_GetUnitLoc (unit lp_whichUnit) {
     // Automatic Variable Declarations
     // Implementation
-    return UnitGetPosition(lp_whichUnit);
+    return libGAWT_gf_ConvertSC2PointToWar3Point(UnitGetPosition(lp_whichUnit));
 }
 
 bool j_IsUnitPaused (unit lp_whichHero) {
@@ -13021,26 +13543,138 @@ void j_SetUnitPathing (unit lp_whichUnit, bool lp_flag) {
     }
 }
 
-void j_StartSound (sound lp_soundHandle) {
+void j_SetUnitLookAt (unit lp_whichUnit, string lp_whichBone, unit lp_lookAtTarget, fixed lp_offsetX, fixed lp_offsetY, fixed lp_offsetZ) {
+    // Variable Declarations
+    string lv_type;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_type = "FastStanding";
+
     // Implementation
-    SoundSetOffset(lp_soundHandle, 0.0, c_soundOffsetStart);
-    SoundPause(lp_soundHandle, false);
+    if ((lp_whichBone == "bone_head")) {
+        lv_type = "FastHeadOnly";
+    }
+
+    ActorCreate(ActorScopeFromUnit(lp_lookAtTarget), "LookAtTarget", null, null, null);
+    ActorSend(libNtve_gf_MainActorofUnit(lp_whichUnit), (("AttachOffset ::LastCreated {} " + FixedToString(libGAWT_gf_ConvertWar3Distance(lp_offsetX), c_fixedPrecisionAny) + "," + FixedToString(libGAWT_gf_ConvertWar3Distance(lp_offsetY), c_fixedPrecisionAny) + "," + FixedToString(libGAWT_gf_ConvertWar3Distance(lp_offsetZ), c_fixedPrecisionAny))));
+    libNtve_gf_SimpleLookAtStart(lp_whichUnit, lv_type, libNtve_gf_ActorLastCreated());
 }
 
-void j_StopSound (sound lp_soundHandle, bool lp_killWhenDone, bool lp_fadeOut) {
+void j_ResetUnitLookAt (unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    ActorLookAtTypeStop(libNtve_gf_MainActorofUnit(lp_whichUnit), "FastHeadOnly");
+    ActorLookAtTypeStop(libNtve_gf_MainActorofUnit(lp_whichUnit), "FastStanding");
+}
+
+void j_SetUnitExploded (unit lp_whichUnit, bool lp_exploded) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_exploded == true)) {
+        UnitBehaviorAdd(lp_whichUnit, "War3_AlwaysExplode", lp_whichUnit, 1);
+    }
+    else {
+        UnitBehaviorRemove(lp_whichUnit, "War3_AlwaysExplode", c_unitBehaviorCountAll);
+    }
+}
+
+void j_SetUnitInvulnerable (unit lp_whichUnit, bool lp_flag) {
+    // Automatic Variable Declarations
+    // Implementation
+    libNtve_gf_MakeUnitInvulnerable(lp_whichUnit, lp_flag);
+}
+
+void j_PauseUnit (unit lp_whichUnit, bool lp_flag) {
+    // Automatic Variable Declarations
+    // Implementation
+    libNtve_gf_PauseUnit(lp_whichUnit, lp_flag);
+}
+
+bool j_IsUnitHidden (unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    return libNtve_gf_UnitIsHidden(lp_whichUnit);
+}
+
+unit j_FirstOfGroup (unitgroup lp_whichGroup) {
+    // Automatic Variable Declarations
+    // Implementation
+    return UnitGroupUnit(lp_whichGroup, 1);
+}
+
+void j_ClearSelection () {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitClearSelection(j_GetLocalPlayer());
+}
+
+void j_SelectHeroSkill (unit lp_whichHero, int lp_abilcode) {
+    // Variable Declarations
+    string lv_itAbil;
+    int lv_itCmdIndex;
+    string lv_abilId;
+
+    // Automatic Variable Declarations
+    int auto94A8F95D_i;
+
+    // Variable Initialization
+    lv_abilId = (GAw3_IntToASCII4(lp_abilcode));
+
+    // Implementation
+    auto94A8F95D_i = 0;
+    for ( ; auto94A8F95D_i < CatalogFieldValueCount(c_gameCatalogUnit,UnitGetType(lp_whichHero),"LearnInfoArray",c_playerAny) ; auto94A8F95D_i += 1 ) {
+        lv_itAbil = CatalogFieldValueGet(c_gameCatalogUnit, UnitGetType(lp_whichHero), "LearnInfoArray["+IntToString(auto94A8F95D_i)+"].Abil",c_playerAny);
+        lv_itCmdIndex = auto94A8F95D_i;
+        if ((lv_abilId == lv_itAbil)) {
+            UnitIssueOrder(lp_whichHero, Order(AbilityCommand("War3_LearnHero", lv_itCmdIndex)), c_orderQueueReplace);
+            break;
+        }
+
+    }
+}
+
+void j_StartSound (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
+    // Automatic Variable Declarations
+    // Implementation
+    if ((lp_soundHandle.lv_killed == true)) {
+        return ;
+    }
+
+    if ((lp_soundHandle.lv_sound != null)) {
+        SoundPause(lp_soundHandle.lv_sound, false);
+        SoundSetOffset(lp_soundHandle.lv_sound, lp_soundHandle.lv_startOffset, c_soundOffsetStart);
+        lp_soundHandle.lv_paused = false;
+    }
+    else if ((lp_soundHandle.lv_unit != null)) {
+        SoundPlayOnUnitForPlayer(SoundLink(lp_soundHandle.lv_link, c_soundIndexAny), c_maxPlayers, PlayerGroupAll(), lp_soundHandle.lv_unit, 0.0, lp_soundHandle.lv_volume, lp_soundHandle.lv_startOffset);
+    }
+    else if ((lp_soundHandle.lv_position != null)) {
+        SoundPlayAtPointForPlayer(SoundLink(lp_soundHandle.lv_link, c_soundIndexAny), c_maxPlayers, PlayerGroupAll(), lp_soundHandle.lv_position, PointGetHeight(lp_soundHandle.lv_position), lp_soundHandle.lv_volume, lp_soundHandle.lv_startOffset);
+    }
+    else if (true) {
+        SoundPlayForPlayer(SoundLink(lp_soundHandle.lv_link, c_soundIndexAny), c_maxPlayers, PlayerGroupAll(), 100.0, lp_soundHandle.lv_startOffset);
+    }
+}
+
+void j_StopSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_killWhenDone, bool lp_fadeOut) {
     // Automatic Variable Declarations
     // Implementation
     if ((lp_killWhenDone == true)) {
-        SoundStop(SoundLastPlayed(), lp_fadeOut);
+        SoundStop(lp_soundHandle.lv_sound, lp_fadeOut);
+        lp_soundHandle.lv_killed = true;
     }
     else {
-        SoundPause(lp_soundHandle, true);
+        SoundPause(lp_soundHandle.lv_sound, true);
+        lp_soundHandle.lv_paused = true;
     }
+    TransmissionClear(lp_soundHandle.lv_transmission);
 }
 
-void j_KillSoundWhenDone (sound lp_soundHandle) {
+void j_KillSoundWhenDone (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
     // Automatic Variable Declarations
+    // Implementation
+    lp_soundHandle.lv_killed = true;
 }
 
 void j_SetMapMusic (string lp_musicName, bool lp_random, int lp_index) {
@@ -13061,18 +13695,33 @@ void j_ClearMapMusic () {
 
 void j_PlayMusic (string lp_musicName) {
     // Automatic Variable Declarations
+    // Implementation
+    j_PlayMusicEx(lp_musicName, 0, 1);
 }
 
 void j_PlayMusicEx (string lp_musicName, int lp_frommsecs, int lp_fadeinmsecs) {
     // Automatic Variable Declarations
+    // Implementation
+    if ((lp_fadeinmsecs > 0)) {
+        SoundStop(libGAWT_gv_music, true);
+    }
+    else {
+        SoundStop(libGAWT_gv_music, false);
+    }
+    SoundPlayForPlayer(SoundLink((lp_musicName), c_soundIndexAny), c_maxPlayers, PlayerGroupAll(), 100.0, (lp_frommsecs / 1000.0));
+    libGAWT_gv_music = SoundLastPlayed();
 }
 
 void j_StopMusic (bool lp_fadeOut) {
     // Automatic Variable Declarations
+    // Implementation
+    SoundPause(libGAWT_gv_music, true);
 }
 
 void j_ResumeMusic () {
     // Automatic Variable Declarations
+    // Implementation
+    SoundPause(libGAWT_gv_music, false);
 }
 
 void j_PlayThematicMusic (string lp_musicFileName) {
@@ -13109,60 +13758,134 @@ void j_EndThematicMusic () {
     SoundtrackPause(PlayerGroupAll(), c_soundtrackCategoryMusic, false, true);
 }
 
-void j_SetMusicVolume (int lp_volume) {
+void j_TriggerWaitForSound (structref<libGAWT_gs_j_Sound> lp_s, fixed lp_offset) {
     // Automatic Variable Declarations
+    // Implementation
+    if ((lp_s.lv_transmission == c_invalidTransmissionId)) {
+        TransmissionWait(lp_s.lv_transmission, lp_offset);
+    }
+    else {
+        SoundWait(lp_s.lv_sound, lp_offset, c_soundOffsetEnd);
+    }
+}
+
+void j_SetMusicVolume (int lp_volume) {
+    // Variable Declarations
+    fixed lv_newVolume;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_newVolume = (lp_volume/1.27);
+
+    // Implementation
+    SoundSetVolume(libGAWT_gv_music, lp_volume);
 }
 
 void j_SetMusicPlayPosition (int lp_millisecs) {
+    // Variable Declarations
+    fixed lv_newSec;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_newSec = (lp_millisecs / 1000.0);
+
+    // Implementation
+    SoundSetOffset(libGAWT_gv_music, lv_newSec, c_soundOffsetStart);
 }
 
 void j_SetThematicMusicPlayPosition (int lp_millisecs) {
+    // Variable Declarations
+    fixed lv_newSec;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_newSec = (lp_millisecs / 1000.0);
+
+    // Implementation
+    SoundSetOffset(libGAWT_gv_thematicMusic, lv_newSec, c_soundOffsetStart);
 }
 
-void j_SetSoundDuration (sound lp_soundHandle, int lp_duration) {
-    // Automatic Variable Declarations
-}
-
-int j_GetSoundDuration (sound lp_soundHandle) {
+void j_SetSoundDuration (structref<libGAWT_gs_j_Sound> lp_soundHandle, int lp_duration) {
     // Automatic Variable Declarations
     // Implementation
-    return 0;
+    lp_soundHandle.lv_durationMS = lp_duration;
 }
 
-int j_GetSoundFileDuration (string lp_musicFileName) {
+int j_GetSoundDuration (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
     // Automatic Variable Declarations
     // Implementation
-    return 0;
+    return lp_soundHandle.lv_durationMS;
+}
+
+int j_GetSoundFileDuration (soundlink lp_musicFileName) {
+    // Automatic Variable Declarations
+    // Implementation
+    SoundLengthQuery(lp_musicFileName);
+    SoundLengthQueryWait();
+    return FixedToInt((SoundLengthSync(lp_musicFileName) * 1000.0));
 }
 
 void j_VolumeGroupSetVolume (int lp_vgroup, fixed lp_scale) {
     // Automatic Variable Declarations
+    // Implementation
+    SoundChannelSetVolume(PlayerGroupAll(), lp_vgroup, (lp_scale + 100.0), 0.0);
 }
 
 void j_VolumeGroupReset () {
     // Automatic Variable Declarations
+    // Implementation
+    libLbty_gf_SetAllSoundChannelVolumesStandardTiming(libNtve_ge_VolumeChannelMode_Game, PlayerGroupAll());
 }
 
-bool j_GetSoundIsPlaying (sound lp_soundHandle) {
+bool j_GetSoundIsPlaying (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
     // Automatic Variable Declarations
     // Implementation
-    return false;
+    return ((lp_soundHandle.lv_sound != null) && (lp_soundHandle.lv_paused == false));
 }
 
-bool j_GetSoundIsLoading (sound lp_soundHandle) {
+bool j_GetSoundIsLoading (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
     // Automatic Variable Declarations
     // Implementation
-    return false;
+    return ((lp_soundHandle.lv_transmission != c_invalidTransmissionId) && (lp_soundHandle.lv_durationMS == 0));
 }
 
-void j_RegisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+void j_RegisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_UnregisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_SetSoundVolume (structref<libGAWT_gs_j_Sound> lp_soundHandle, int lp_volume) {
+    // Variable Declarations
+    fixed lv_newVolume;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_newVolume = (lp_volume/1.27);
+
+    // Implementation
+    SoundSetVolume(lp_soundHandle.lv_sound, lv_newVolume);
+    lp_soundHandle.lv_volume = lv_newVolume;
+}
+
+void j_SetSoundPosition (structref<libGAWT_gs_j_Sound> lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
+    // Automatic Variable Declarations
+    // Implementation
+    lp_soundHandle.lv_position = libGAWT_gf_ConvertWar3PointXYZ(lp_x, lp_y, lp_z);
+}
+
+void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
     // Automatic Variable Declarations
 }
 
-void j_UnregisterStackedSound (sound lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+void j_AttachSoundToUnit (structref<libGAWT_gs_j_Sound> lp_soundHandle, unit lp_whichUnit) {
     // Automatic Variable Declarations
+    // Implementation
+    lp_soundHandle.lv_unit = lp_whichUnit;
 }
 
 int j_GetRandomInt (int lp_lowBound, int lp_highBound) {
@@ -13175,6 +13898,13 @@ fixed j_GetRandomReal (fixed lp_lowBound, fixed lp_highBound) {
     // Automatic Variable Declarations
     // Implementation
     return RandomFixed(lp_lowBound, lp_highBound);
+}
+
+int j_Player (int lp_number) {
+    // Automatic Variable Declarations
+    // Implementation
+        if(lp_number==PLAYER_NEUTRAL_PASSIVE){return 0;};
+        return lp_number+1;
 }
 
 int j_GetLocalPlayer () {
@@ -13226,15 +13956,34 @@ void j_SetGameDifficulty (int lp_whichdifficulty) {
     }
 }
 
-bool j_IssuePointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y) {
+bool j_IssueImmediateOrder (unit lp_whichUnit, string lp_order) {
     // Variable Declarations
-    bool lv_val;
+    order lv_order;
 
     // Automatic Variable Declarations
     // Variable Initialization
+    lv_order = GAw3_OrderStringToOrder(lp_order);
 
     // Implementation
-    return j_IssuePointOrderLoc(lp_whichUnit, lp_order, Point(lp_x, lp_y));
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
+}
+
+bool j_IssueImmediateOrderById (unit lp_whichUnit, int lp_order) {
+    // Variable Declarations
+    order lv_order;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = libGAWT_gf_ConvertWar3OrderIdToOrder(lp_order);
+
+    // Implementation
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
+}
+
+bool j_IssuePointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y) {
+    // Automatic Variable Declarations
+    // Implementation
+    return j_IssuePointOrderLoc(lp_whichUnit, lp_order, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
 }
 
 bool j_IssuePointOrderLoc (unit lp_whichUnit, string lp_order, point lp_whichLocation) {
@@ -13246,56 +13995,163 @@ bool j_IssuePointOrderLoc (unit lp_whichUnit, string lp_order, point lp_whichLoc
     lv_order = GAw3_OrderStringToOrder(lp_order);
 
     // Implementation
-    OrderSetTargetPoint(lv_order, lp_whichLocation);
+    OrderSetTargetPoint(lv_order, libGAWT_gf_ConvertWar3Point(lp_whichLocation));
     return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssuePointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y) {
     // Automatic Variable Declarations
     // Implementation
-    return false;
+    return j_IssuePointOrderByIdLoc(lp_whichUnit, lp_order, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
 }
 
 bool j_IssuePointOrderByIdLoc (unit lp_whichUnit, int lp_order, point lp_whichLocation) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = libGAWT_gf_ConvertWar3OrderIdToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetPoint(lv_order, libGAWT_gf_ConvertWar3Point(lp_whichLocation));
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = GAw3_OrderStringToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetUnit(lv_order, lp_targetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = libGAWT_gf_ConvertWar3OrderIdToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetUnit(lv_order, lp_targetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueInstantPointOrder (unit lp_whichUnit, string lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = GAw3_OrderStringToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetPoint(lv_order, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
+    OrderSetTargetItem(lv_order, lp_instantTargetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueInstantPointOrderById (unit lp_whichUnit, int lp_order, fixed lp_x, fixed lp_y, unit lp_instantTargetWidget) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = libGAWT_gf_ConvertWar3OrderIdToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetPoint(lv_order, libGAWT_gf_ConvertWar3PointXY(lp_x, lp_y));
+    OrderSetTargetItem(lv_order, lp_instantTargetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueInstantTargetOrder (unit lp_whichUnit, string lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
+    // Variable Declarations
+    order lv_order;
+
     // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = GAw3_OrderStringToOrder(lp_order);
+
     // Implementation
-    return false;
+    OrderSetTargetUnit(lv_order, lp_targetWidget);
+    OrderSetTargetItem(lv_order, lp_instantTargetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
 }
 
 bool j_IssueInstantTargetOrderById (unit lp_whichUnit, int lp_order, unit lp_targetWidget, unit lp_instantTargetWidget) {
+    // Variable Declarations
+    order lv_order;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+    lv_order = libGAWT_gf_ConvertWar3OrderIdToOrder(lp_order);
+
+    // Implementation
+    OrderSetTargetUnit(lv_order, lp_targetWidget);
+    OrderSetTargetItem(lv_order, lp_instantTargetWidget);
+    return UnitIssueOrder(lp_whichUnit,lv_order,c_orderQueueReplace);
+}
+
+timer j_CreateTimer () {
     // Automatic Variable Declarations
     // Implementation
-    return false;
+    return TimerCreate();
+}
+
+void j_DestroyTimer (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    libNtve_gf_StopTimer(lp_whichTimer);
+}
+
+void j_TimerStart (timer lp_whichTimer, fixed lp_timeout, bool lp_periodic, string lp_handlerFunc) {
+    // Automatic Variable Declarations
+    // Implementation
+    TimerStart(lp_whichTimer, lp_timeout, lp_periodic, c_timeGame);
+}
+
+fixed j_TimerGetElapsed (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    return TimerGetElapsed(lp_whichTimer);
+}
+
+fixed j_TimerGetRemaining (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    return TimerGetRemaining(lp_whichTimer);
+}
+
+fixed j_TimerGetTimeout (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    return TimerGetDuration(lp_whichTimer);
+}
+
+void j_PauseTimer (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    TimerPause(lp_whichTimer, true);
+}
+
+void j_ResumeTimer (timer lp_whichTimer) {
+    // Automatic Variable Declarations
+    // Implementation
+    TimerPause(lp_whichTimer, true);
+}
+
+timer j_GetExpiredTimer () {
+    // Automatic Variable Declarations
+    // Implementation
+    return EventTimer();
 }
 
 trigger j_CreateTrigger () {
@@ -13336,6 +14192,48 @@ bool j_IsTriggerEnabled (trigger lp_whichTrigger) {
 
 void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
     // Automatic Variable Declarations
+}
+
+unit j_GetFilterUnit () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_FilterUnitStack");
+        return DataTableGetUnit(false,"GAw3_FilterUnit_"+IntToString(Stack));
+}
+
+unit j_GetEnumUnit () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_EnumUnitStack");
+        return DataTableGetUnit(false,"GAw3_EnumUnit_"+IntToString(Stack));
+}
+
+unit j_GetFilterDestructable () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_FilterDestructableStack");
+        return DataTableGetUnit(false,"GAw3_FilterDestructable_"+IntToString(Stack));
+}
+
+unit j_GetEnumDestructable () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_EnumDestructableStack");
+        return DataTableGetUnit(false,"GAw3_EnumDestructable_"+IntToString(Stack));
+}
+
+unit j_GetFilterItem () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_FilterItemStack");
+        return DataTableGetUnit(false,"GAw3_FilterItem_"+IntToString(Stack));
+}
+
+unit j_GetEnumItem () {
+    // Automatic Variable Declarations
+    // Implementation
+        int Stack=DataTableGetInt(false,"GAw3_EnumItemStack");
+        return DataTableGetUnit(false,"GAw3_EnumItem_"+IntToString(Stack));
 }
 
 int j_ConvertRace (int lp_i) {
@@ -13602,19 +14500,19 @@ int j_ConvertPathingType (int lp_i) {
     return 0;
 }
 
-int j_OrderId (string lp_mfmmwfckwlfjbcrl) {
+int j_OrderId (string lp_hbvjkhpwvrflbxqa) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_UnitId (string lp_yjwnarvstylxmabj) {
+int j_UnitId (string lp_eedbpqlkgaghwwcb) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_AbilityId (string lp_kqciowffxabekbma) {
+int j_AbilityId (string lp_agwvrlirawdsneua) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
@@ -13948,52 +14846,6 @@ string j_GetPlayerName (int lp_whichPlayer) {
     return null;
 }
 
-timer j_CreateTimer () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-void j_DestroyTimer (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-}
-
-void j_TimerStart (timer lp_whichTimer, fixed lp_timeout, bool lp_periodic, string lp_handlerFunc) {
-    // Automatic Variable Declarations
-}
-
-fixed j_TimerGetElapsed (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-fixed j_TimerGetRemaining (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-fixed j_TimerGetTimeout (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_PauseTimer (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-}
-
-void j_ResumeTimer (timer lp_whichTimer) {
-    // Automatic Variable Declarations
-}
-
-timer j_GetExpiredTimer () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
 unitgroup j_CreateGroup () {
     // Automatic Variable Declarations
     // Implementation
@@ -14102,16 +14954,6 @@ bool j_GroupTargetOrderById (unitgroup lp_whichGroup, int lp_order, unit lp_targ
     // Automatic Variable Declarations
     // Implementation
     return false;
-}
-
-void j_ForGroup (unitgroup lp_whichGroup, string lp_callback) {
-    // Automatic Variable Declarations
-}
-
-unit j_FirstOfGroup (unitgroup lp_whichGroup) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
 }
 
 playergroup j_CreateForce () {
@@ -14258,10 +15100,6 @@ void j_RegionClearCellAtLoc (region lp_whichRegion, point lp_whichLocation) {
     // Automatic Variable Declarations
 }
 
-void j_RemoveLocation (point lp_whichLocation) {
-    // Automatic Variable Declarations
-}
-
 void j_MoveLocation (point lp_whichLocation, fixed lp_newX, fixed lp_newY) {
     // Automatic Variable Declarations
 }
@@ -14303,42 +15141,6 @@ bool j_IsLocationInRegion (region lp_whichRegion, point lp_whichLocation) {
 }
 
 region j_GetWorldBounds () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetFilterUnit () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetEnumUnit () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetFilterDestructable () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetEnumDestructable () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetFilterItem () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-unit j_GetEnumItem () {
     // Automatic Variable Declarations
     // Implementation
     return null;
@@ -14559,7 +15361,7 @@ string j_GetSaveBasicFilename () {
     return null;
 }
 
-void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_bayyxqgmdiwhlxdd, int lp_whichPlayerEvent) {
+void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_ryfslecwkdtiaiqk, int lp_whichPlayerEvent) {
     // Automatic Variable Declarations
     // Implementation
 }
@@ -14992,10 +15794,6 @@ void j_TriggerClearActions (trigger lp_whichTrigger) {
 }
 
 void j_TriggerSleepAction (fixed lp_timeout) {
-    // Automatic Variable Declarations
-}
-
-void j_TriggerWaitForSound (sound lp_s, fixed lp_offset) {
     // Automatic Variable Declarations
 }
 
@@ -15477,14 +16275,6 @@ void j_AddUnitAnimationProperties (unit lp_whichUnit, string lp_animProperties, 
     // Automatic Variable Declarations
 }
 
-void j_SetUnitLookAt (unit lp_whichUnit, string lp_whichBone, unit lp_lookAtTarget, fixed lp_offsetX, fixed lp_offsetY, fixed lp_offsetZ) {
-    // Automatic Variable Declarations
-}
-
-void j_ResetUnitLookAt (unit lp_whichUnit) {
-    // Automatic Variable Declarations
-}
-
 void j_SetUnitRescuable (unit lp_whichUnit, int lp_byWhichPlayer, bool lp_flag) {
     // Automatic Variable Declarations
 }
@@ -15587,10 +16377,6 @@ bool j_IsSuspendedXP (unit lp_whichHero) {
     return false;
 }
 
-void j_SelectHeroSkill (unit lp_whichHero, int lp_abilcode) {
-    // Automatic Variable Declarations
-}
-
 int j_GetUnitAbilityLevel (unit lp_whichUnit, int lp_abilcode) {
     // Automatic Variable Declarations
     // Implementation
@@ -15625,22 +16411,6 @@ bool j_ReviveHeroLoc (unit lp_whichHero, point lp_loc, bool lp_doEyecandy) {
     // Automatic Variable Declarations
     // Implementation
     return false;
-}
-
-void j_SetUnitExploded (unit lp_whichUnit, bool lp_exploded) {
-    // Automatic Variable Declarations
-}
-
-void j_SetUnitInvulnerable (unit lp_whichUnit, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
-void j_PauseUnit (unit lp_whichUnit, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
-void j_ClearSelection () {
-    // Automatic Variable Declarations
 }
 
 void j_SelectUnit (unit lp_whichUnit, bool lp_flag) {
@@ -15937,12 +16707,6 @@ bool j_IsUnitInRangeLoc (unit lp_whichUnit, point lp_whichLocation, fixed lp_dis
     return false;
 }
 
-bool j_IsUnitHidden (unit lp_whichUnit) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
 bool j_IsUnitIllusion (unit lp_whichUnit) {
     // Automatic Variable Declarations
     // Implementation
@@ -16009,10 +16773,6 @@ bool j_UnitMakeAbilityPermanent (unit lp_whichUnit, bool lp_permanent, int lp_ab
     // Automatic Variable Declarations
     // Implementation
     return false;
-}
-
-void j_UnitRemoveBuffs (unit lp_whichUnit, bool lp_removePositive, bool lp_removeNegative) {
-    // Automatic Variable Declarations
 }
 
 void j_UnitRemoveBuffsEx (unit lp_whichUnit, bool lp_removePositive, bool lp_removeNegative, bool lp_magic, bool lp_physical, bool lp_timedLife, bool lp_aura, bool lp_autoDispel) {
@@ -16104,18 +16864,6 @@ bool j_UnitDamagePoint (unit lp_whichUnit, fixed lp_delay, fixed lp_radius, fixe
 }
 
 bool j_UnitDamageTarget (unit lp_whichUnit, unit lp_target, fixed lp_amount, bool lp_attack, bool lp_ranged, int lp_attackType, int lp_damageType, int lp_weaponType) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueImmediateOrder (unit lp_whichUnit, string lp_order) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IssueImmediateOrderById (unit lp_whichUnit, int lp_order) {
     // Automatic Variable Declarations
     // Implementation
     return false;
@@ -16271,12 +17019,6 @@ int j_GetUnitUserData (unit lp_whichUnit) {
 
 void j_SetUnitUserData (unit lp_whichUnit, int lp_data) {
     // Automatic Variable Declarations
-}
-
-int j_Player (int lp_number) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
 }
 
 bool j_IsPlayerAlly (int lp_whichPlayer, int lp_otherPlayer) {
@@ -18114,140 +18856,6 @@ void j_MultiboardSuppressDisplay (bool lp_flag) {
     // Automatic Variable Declarations
 }
 
-void j_SetCameraPosition (fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraQuickPosition (fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraBounds (fixed lp_x1, fixed lp_y1, fixed lp_x2, fixed lp_y2, fixed lp_x3, fixed lp_y3, fixed lp_x4, fixed lp_y4) {
-    // Automatic Variable Declarations
-}
-
-void j_StopCamera () {
-    // Automatic Variable Declarations
-}
-
-void j_ResetToGameCamera (fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_PanCameraTo (fixed lp_x, fixed lp_y) {
-    // Automatic Variable Declarations
-}
-
-void j_PanCameraToTimed (fixed lp_x, fixed lp_y, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_PanCameraToWithZ (fixed lp_x, fixed lp_y, fixed lp_zOffsetDest) {
-    // Automatic Variable Declarations
-}
-
-void j_PanCameraToTimedWithZ (fixed lp_x, fixed lp_y, fixed lp_zOffsetDest, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCinematicCamera (string lp_cameraModelFile) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraRotateMode (fixed lp_x, fixed lp_y, fixed lp_radiansToSweep, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraField (int lp_whichField, fixed lp_value, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_AdjustCameraField (int lp_whichField, fixed lp_offset, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraTargetController (unit lp_whichUnit, fixed lp_xoffset, fixed lp_yoffset, bool lp_inheritOrientation) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCameraOrientController (unit lp_whichUnit, fixed lp_xoffset, fixed lp_yoffset) {
-    // Automatic Variable Declarations
-}
-
-camerainfo j_CreateCameraSetup () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-void j_CameraSetupSetField (camerainfo lp_whichSetup, int lp_whichField, fixed lp_value, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-fixed j_CameraSetupGetField (camerainfo lp_whichSetup, int lp_whichField) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_CameraSetupSetDestPosition (camerainfo lp_whichSetup, fixed lp_x, fixed lp_y, fixed lp_duration) {
-    // Automatic Variable Declarations
-}
-
-point j_CameraSetupGetDestPositionLoc (camerainfo lp_whichSetup) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-fixed j_CameraSetupGetDestPositionX (camerainfo lp_whichSetup) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-fixed j_CameraSetupGetDestPositionY (camerainfo lp_whichSetup) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_CameraSetupApply (camerainfo lp_whichSetup, bool lp_doPan, bool lp_panTimed) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetupApplyWithZ (camerainfo lp_whichSetup, fixed lp_zDestOffset) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetupApplyForceDuration (camerainfo lp_whichSetup, bool lp_doPan, fixed lp_forceDuration) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetupApplyForceDurationWithZ (camerainfo lp_whichSetup, fixed lp_zDestOffset, fixed lp_forceDuration) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetTargetNoise (fixed lp_mag, fixed lp_velocity) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetSourceNoise (fixed lp_mag, fixed lp_velocity) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetTargetNoiseEx (fixed lp_mag, fixed lp_velocity, bool lp_vertOnly) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetSourceNoiseEx (fixed lp_mag, fixed lp_velocity, bool lp_vertOnly) {
-    // Automatic Variable Declarations
-}
-
-void j_CameraSetSmoothingFactor (fixed lp_factor) {
-    // Automatic Variable Declarations
-}
-
 void j_SetCineFilterTexture (string lp_filename) {
     // Automatic Variable Declarations
 }
@@ -18426,10 +19034,6 @@ void j_SetSoundChannel (sound lp_soundHandle, int lp_channel) {
     // Automatic Variable Declarations
 }
 
-void j_SetSoundVolume (sound lp_soundHandle, int lp_volume) {
-    // Automatic Variable Declarations
-}
-
 void j_SetSoundPitch (sound lp_soundHandle, fixed lp_pitch) {
     // Automatic Variable Declarations
 }
@@ -18447,18 +19051,6 @@ void j_SetSoundConeAngles (sound lp_soundHandle, fixed lp_inside, fixed lp_outsi
 }
 
 void j_SetSoundConeOrientation (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
-    // Automatic Variable Declarations
-}
-
-void j_SetSoundPosition (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
-    // Automatic Variable Declarations
-}
-
-void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
-    // Automatic Variable Declarations
-}
-
-void j_AttachSoundToUnit (sound lp_soundHandle, unit lp_whichUnit) {
     // Automatic Variable Declarations
 }
 
@@ -18788,14 +19380,6 @@ bool j_IsPointBlighted (fixed lp_x, fixed lp_y) {
     // Automatic Variable Declarations
     // Implementation
     return false;
-}
-
-void j_SetDoodadAnimation (fixed lp_x, fixed lp_y, fixed lp_radius, int lp_doodadID, bool lp_nearestOnly, string lp_animName, bool lp_animRandom) {
-    // Automatic Variable Declarations
-}
-
-void j_SetDoodadAnimationRect (region lp_r, int lp_doodadID, string lp_animName, bool lp_animRandom) {
-    // Automatic Variable Declarations
 }
 
 void j_StartMeleeAI (int lp_num, string lp_script) {

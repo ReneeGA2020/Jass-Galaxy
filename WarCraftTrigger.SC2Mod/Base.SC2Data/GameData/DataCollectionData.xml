@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Catalog>
+    <CDataCollectionUnit id="CameraModelDummy" parent="War3_Army">
+        <EditorCategories value="Race:Other,DataGroup:Unit,ObjectType:Prop,DataFamily:Campaign"/>
+        <UpgradeInfoUnitLifeArmorPerLevel value="2"/>
+    </CDataCollectionUnit>
+</Catalog>

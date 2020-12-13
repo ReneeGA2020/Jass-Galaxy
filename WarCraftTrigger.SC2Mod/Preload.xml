@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Preload>
 <Actor id="SYSTEM_ActorConfig"/>
+<Actor id="LookAtTarget"/>
+<Behavior id="War3_AlwaysExplode"/>
 <Behavior id="SetUnitPathing"/>
 <Effect id="ClearOrderQueue"/>
+<Effect id="War3_UnitRemoveBuffs_Positive"/>
+<Effect id="War3_UnitRemoveBuffs_Negative"/>
+<Unit id="CameraModelDummy"/>
 </Preload>
