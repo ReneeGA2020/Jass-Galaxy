@@ -18,6 +18,8 @@ void libGAWT_InitLibraries () {
 bool libGAWT_InitVariables_completed = false;
 
 void libGAWT_InitVariables () {
+    int init_i;
+
     if (libGAWT_InitVariables_completed) {
         return;
     }
@@ -28,6 +30,9 @@ void libGAWT_InitVariables () {
     libGAWT_gv_jassStateTable = DataTableInstanceLastCreated();
     libGAWT_gv_j_lastCreatedSound.lv_transmission = c_invalidTransmissionId;
     libGAWT_gv_j_lastCreatedSound.lv_volume = 100.0;
+    for (init_i = 0; init_i <= 16; init_i += 1) {
+        libGAWT_gv_war3_Players[init_i].lv_rescuable = BitMaskMakeDefaultMask();
+    }
 }
 
 // Custom Script
@@ -648,8 +653,70 @@ libGAWT_gv_jassStateTable=DataTableInstanceLastCreated();
 }
 
 //--------------------------------------------------------------------------------------------------
-// Custom Script: For Group (Custom Script)
+// Custom Script: Boolean Expr
 //--------------------------------------------------------------------------------------------------
+conditionfunc j_Condition(boolexpr func){
+    return func;   
+}
+filterfunc j_Filter(boolexpr func){
+    return func;   
+}
+
+//--------------------------------------------------------------------------------------------------
+// Custom Script: Group Enums (Custom Script)
+//--------------------------------------------------------------------------------------------------
+void j_GroupEnumUnitsOfType(group whichGroup, string unitname, boolexpr filter){
+    string type=GAw3_UnitCodeNameToType(unitname);
+    unitgroup ng=UnitGroup(type, c_playerAny, RegionEntireMap(),GAw3_DefaultFilter, c_noMaxCount);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsOfPlayer(group whichGroup, player whichPlayer, boolexpr filter){
+    unitgroup ng=UnitGroup(null, whichPlayer, RegionEntireMap(),GAw3_DefaultFilter, c_noMaxCount);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsOfTypeCounted(group whichGroup, string unitname, boolexpr filter, int countLimit){
+    unitgroup ng=UnitGroup(unitname, c_playerAny, RegionEntireMap(),GAw3_DefaultFilter, countLimit);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsInRect(group whichGroup, rect r, boolexpr filter){
+    unitgroup ng=UnitGroup(null, c_playerAny, r,GAw3_DefaultFilterNoHidden, c_noMaxCount);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsInRectCounted(group whichGroup, rect r, boolexpr filter, int countLimit){
+    unitgroup ng=UnitGroup(null, c_playerAny, r,GAw3_DefaultFilterNoHidden, countLimit);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsInRangeOfLocCounted(group whichGroup, location whichLocation, fixed radius, boolexpr filter, int countLimit){
+    unitgroup ng=UnitGroupSearch(null,c_playerAny,whichLocation,radius/128,GAw3_DefaultFilterNoHidden,countLimit);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
+void j_GroupEnumUnitsInRangeOfLoc(group whichGroup, location whichLocation, fixed radius, boolexpr filter){
+    j_GroupEnumUnitsInRangeOfLocCounted(whichGroup,whichLocation,radius,filter,c_noMaxCount);
+}
+void j_GroupEnumUnitsInRange(group whichGroup, fixed x, fixed y, fixed radius, boolexpr filter){
+    j_GroupEnumUnitsInRangeOfLoc(whichGroup,Point(x,y),radius,filter);
+}
+void j_GroupEnumUnitsInRangeCounted(group whichGroup, fixed x, fixed y, fixed radius, boolexpr filter, int countLimit){
+    j_GroupEnumUnitsInRangeOfLocCounted(whichGroup,Point(x,y),radius,filter,countLimit);
+}
+void j_GroupEnumUnitsSelected(group whichGroup, player whichPlayer, boolexpr filter){
+    unitgroup ng=UnitGroupSelected(whichPlayer);
+    ng=GAw3_GroupEnumUnits(ng,filter);
+    UnitGroupClear(whichGroup);
+    UnitGroupAddUnitGroup(whichGroup,ng);
+}
 void j_ForGroup( unitgroup whichGroup, code callback ){
     int c=UnitGroupCount(whichGroup,c_unitCountAll);
     int i;
@@ -676,35 +743,35 @@ void j_ForGroup( unitgroup whichGroup, code callback ){
     //
     playerstate PLAYER_STATE_RESOURCE_GOLD             = c_playerPropTerrazine;
     playerstate PLAYER_STATE_RESOURCE_LUMBER           = c_playerPropCustom;
-    playerstate PLAYER_STATE_RESOURCE_HERO_TOKENS      = -1;//ConvertPlayerState(3);
+    playerstate PLAYER_STATE_RESOURCE_HERO_TOKENS      = -3;//ConvertPlayerState(3);
     playerstate PLAYER_STATE_RESOURCE_FOOD_CAP         = c_playerPropSuppliesMade;
     playerstate PLAYER_STATE_RESOURCE_FOOD_USED        = c_playerPropSuppliesUsed;
     playerstate PLAYER_STATE_FOOD_CAP_CEILING          = c_playerPropSuppliesLimit;
-    playerstate PLAYER_STATE_GIVES_BOUNTY              = 99;//ConvertPlayerState(7);
-    playerstate PLAYER_STATE_ALLIED_VICTORY            = -1;//ConvertPlayerState(8);
-    playerstate PLAYER_STATE_PLACED                    = -1;//ConvertPlayerState(9);
-    playerstate PLAYER_STATE_OBSERVER_ON_DEATH         = -1;//ConvertPlayerState(10);
-    playerstate PLAYER_STATE_OBSERVER                  = -1;//ConvertPlayerState(11);
-    playerstate PLAYER_STATE_UNFOLLOWABLE              = -1;//ConvertPlayerState(12);
+    playerstate PLAYER_STATE_GIVES_BOUNTY              = -7;// c_playerStateGivesBounty;//ConvertPlayerState(7); player flag
+    playerstate PLAYER_STATE_ALLIED_VICTORY            = -8;//ConvertPlayerState(8);
+    playerstate PLAYER_STATE_PLACED                    = -9;//ConvertPlayerState(9);
+    playerstate PLAYER_STATE_OBSERVER_ON_DEATH         = -10;//ConvertPlayerState(10);
+    playerstate PLAYER_STATE_OBSERVER                  = -11;//ConvertPlayerState(11);
+    playerstate PLAYER_STATE_UNFOLLOWABLE              = -12;//ConvertPlayerState(12);
     // taxation rate for each resource
     //
-    playerstate PLAYER_STATE_GOLD_UPKEEP_RATE          = -1;//ConvertPlayerState(13);
-    playerstate PLAYER_STATE_LUMBER_UPKEEP_RATE        = -1;//ConvertPlayerState(14);
+    playerstate PLAYER_STATE_GOLD_UPKEEP_RATE          = -13;//ConvertPlayerState(13);
+    playerstate PLAYER_STATE_LUMBER_UPKEEP_RATE        = -14;//ConvertPlayerState(14);
     // cumulative resources collected by the player during the mission
     //
     playerstate PLAYER_STATE_GOLD_GATHERED             = c_playerPropTerrazineCollected;
     playerstate PLAYER_STATE_LUMBER_GATHERED           = c_playerPropCustomCollected;
-    playerstate PLAYER_STATE_NO_CREEP_SLEEP            = -1;//ConvertPlayerState(25);
+    playerstate PLAYER_STATE_NO_CREEP_SLEEP            = -25;//ConvertPlayerState(25);
     alliancetype       ALLIANCE_PASSIVE                = c_allianceIdPassive;
     alliancetype       ALLIANCE_HELP_REQUEST           = c_allianceIdSeekHelp;
     alliancetype       ALLIANCE_HELP_RESPONSE          = c_allianceIdGiveHelp;
-    alliancetype       ALLIANCE_SHARED_XP              = -1;//ConvertAllianceType(3);
-    alliancetype       ALLIANCE_SHARED_SPELLS          = -1;//ConvertAllianceType(4);
+    alliancetype       ALLIANCE_SHARED_XP              = c_allianceIdTrade;
+    alliancetype       ALLIANCE_SHARED_SPELLS          = c_allianceIdSpend;
     alliancetype       ALLIANCE_SHARED_VISION          = c_allianceIdVision;
     alliancetype       ALLIANCE_SHARED_CONTROL         = c_allianceIdControl;
-    alliancetype       ALLIANCE_SHARED_ADVANCED_CONTROL= -1;//ConvertAllianceType(7);
+    alliancetype       ALLIANCE_SHARED_ADVANCED_CONTROL= c_allianceIdPower;
     alliancetype       ALLIANCE_RESCUABLE              = -1;//ConvertAllianceType(8);
-    alliancetype       ALLIANCE_SHARED_VISION_FORCED   = -1;//ConvertAllianceType(9);
+    alliancetype       ALLIANCE_SHARED_VISION_FORCED   = c_allianceIdVision;//ConvertAllianceType(9);
     integer            PLAYER_NEUTRAL_PASSIVE          = 15;
     integer            PLAYER_NEUTRAL_AGGRESSIVE       = 14;
     playergameresult   PLAYER_GAME_RESULT_VICTORY      = c_gameResultVictory;
@@ -955,7 +1022,7 @@ void j_ForGroup( unitgroup whichGroup, code callback ){
     igamestate GAME_STATE_DIVINE_INTERVENTION          = ConvertIGameState(0);
     igamestate GAME_STATE_DISCONNECTED                 = ConvertIGameState(1);
     fgamestate GAME_STATE_TIME_OF_DAY                  = ConvertFGameState(2);
-    playerstate PLAYER_STATE_GAME_RESULT               = ConvertPlayerState(0);
+    playerstate PLAYER_STATE_GAME_RESULT               = -99;//ConvertPlayerState(0);
     unitstate UNIT_STATE_LIFE                          = ConvertUnitState(0);
     unitstate UNIT_STATE_MAX_LIFE                      = ConvertUnitState(1);
     unitstate UNIT_STATE_MANA                          = ConvertUnitState(2);
@@ -13087,6 +13154,98 @@ fixed libGAWT_gf_PointGetX (point lp_p, int lp_xY) {
     return PointGetY(lp_p);
 }
 
+void j_SetPlayerOnScoreScreen (int lp_whichPlayer, bool lp_flag) {
+    // Automatic Variable Declarations
+}
+
+void j_SetCinematicCamera (string lp_cameraModelFile) {
+    // Automatic Variable Declarations
+    // Deprecated
+    CameraUseModel(j_GetLocalPlayer(), UnitLastCreated(), null, 0.0);
+}
+
+void j_CameraSetSmoothingFactor (fixed lp_factor) {
+    // Automatic Variable Declarations
+}
+
+void j_ReloadGame () {
+    // Automatic Variable Declarations
+    // Deprecated
+    RestartGame(PlayerGroupAll());
+}
+
+void j_SetCampaignMenuRace (int lp_r) {
+    // Automatic Variable Declarations
+}
+
+void j_SetCampaignMenuRaceEx (int lp_campaignIndex) {
+    // Automatic Variable Declarations
+}
+
+void j_ForceCampaignSelectScreen () {
+    // Automatic Variable Declarations
+}
+
+void j_LoadGame (string lp_saveFileName, bool lp_doScoreScreen) {
+    // Automatic Variable Declarations
+}
+
+bool j_RenameSaveDirectory (string lp_sourceDirName, string lp_destDirName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_RemoveSaveDirectory (string lp_sourceDirName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_CopySaveGame (string lp_sourceSaveName, string lp_destSaveName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_SaveGameExists (string lp_saveName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+void j_SyncSelections () {
+    // Automatic Variable Declarations
+}
+
+void j_RegisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_UnregisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
+    // Automatic Variable Declarations
+}
+
+void j_SetDefaultDifficulty (int lp_g) {
+    // Automatic Variable Declarations
+}
+
+void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
+    // Automatic Variable Declarations
+}
+
+trigger j_CreateTrigger () {
+    // Automatic Variable Declarations
+    // Implementation
+    return null;
+}
+
 void j_UnitRemoveBuffs (unit lp_whichUnit, bool lp_removePositive, bool lp_removeNegative) {
     // Automatic Variable Declarations
     // Implementation
@@ -13152,12 +13311,6 @@ void j_PanCameraToTimedWithZ (fixed lp_x, fixed lp_y, fixed lp_zOffsetDest, fixe
     // Automatic Variable Declarations
     // Implementation
     CameraPan(j_GetLocalPlayer(), libGAWT_gf_ConvertWar3PointXYZ(lp_x, lp_y, lp_zOffsetDest), lp_duration, -1, 100.0, true);
-}
-
-void j_SetCinematicCamera (string lp_cameraModelFile) {
-    // Automatic Variable Declarations
-    // Deprecated
-    CameraUseModel(j_GetLocalPlayer(), UnitLastCreated(), null, 0.0);
 }
 
 void j_SetCameraRotateMode (fixed lp_x, fixed lp_y, fixed lp_radiansToSweep, fixed lp_duration) {
@@ -13404,10 +13557,6 @@ void j_CameraSetSourceNoiseEx (fixed lp_mag, fixed lp_velocity, bool lp_vertOnly
     CameraSetValue(j_GetLocalPlayer(), c_cameraValueFocalDepth, lp_mag, 0.0, -1, 10.0);
 }
 
-void j_CameraSetSmoothingFactor (fixed lp_factor) {
-    // Automatic Variable Declarations
-}
-
 fixed j_GetDestructableX (unit lp_d) {
     // Automatic Variable Declarations
     // Implementation
@@ -13462,6 +13611,94 @@ void j_SetDoodadAnimationRect (region lp_r, int lp_doodadID, string lp_animName,
     }
 
     libNtve_gf_PlayAnimationOnDoodadsInRegion(lp_r, (GAw3_IntToASCII4(lp_doodadID)), c_animNameDefault, GAw3_ConvertAnimName(lp_animName), lv_flag, c_animTimeDefault);
+}
+
+int j_VersionGet () {
+    // Automatic Variable Declarations
+    // Implementation
+    return 1;
+}
+
+bool j_VersionCompatible (int lp_whichVersion) {
+    // Automatic Variable Declarations
+    // Implementation
+    return true;
+}
+
+bool j_VersionSupported (int lp_whichVersion) {
+    // Automatic Variable Declarations
+    // Implementation
+    return true;
+}
+
+void j_EndGame (bool lp_doScoreScreen) {
+    // Automatic Variable Declarations
+    playergroup autoE278F10C_g;
+    int autoE278F10C_var;
+
+    // Implementation
+    autoE278F10C_g = PlayerGroupActive();
+    autoE278F10C_var = -1;
+    while (true) {
+        autoE278F10C_var = PlayerGroupNextPlayer(autoE278F10C_g, autoE278F10C_var);
+        if (autoE278F10C_var < 0) { break; }
+        GameOver(autoE278F10C_var, c_gameOverTie, false, lp_doScoreScreen);
+    }
+}
+
+void j_ChangeLevel (string lp_newLevel, bool lp_doScoreScreen) {
+    // Automatic Variable Declarations
+    // Implementation
+    GameSetNextMap(lp_newLevel);
+}
+
+void j_RestartGame (bool lp_doScoreScreen) {
+    // Automatic Variable Declarations
+    // Implementation
+    RestartGame(PlayerGroupAll());
+}
+
+void j_SaveGame (string lp_saveFileName) {
+    // Automatic Variable Declarations
+    // Implementation
+    GameSaveCreate(StringToText(lp_saveFileName), StringToText(""), "", false);
+}
+
+void j_SetFloatGameState (int lp_whichFloatGameState, fixed lp_value) {
+    // Automatic Variable Declarations
+    int autoB86DF704_val;
+
+    // Implementation
+    autoB86DF704_val = lp_whichFloatGameState;
+    if (autoB86DF704_val == GAME_STATE_TIME_OF_DAY) {
+        GameTimeOfDayValueSet(FixedToInt((lp_value * 3600.0)));
+    }
+    else {
+    }
+}
+
+fixed j_GetFloatGameState (int lp_whichFloatGameState) {
+    // Automatic Variable Declarations
+    int autoA7489A83_val;
+
+    // Implementation
+    autoA7489A83_val = lp_whichFloatGameState;
+    if (autoA7489A83_val == GAME_STATE_TIME_OF_DAY) {
+        return (IntToFixed(GameTimeOfDayValueGet(c_timeOfDayValueValue)) / 3600.0);
+    }
+    else {
+        return 0.0;
+    }
+}
+
+void j_SetIntegerGameState (int lp_whichIntegerGameState, int lp_value) {
+    // Automatic Variable Declarations
+}
+
+int j_GetIntegerGameState (int lp_whichIntegerGameState) {
+    // Automatic Variable Declarations
+    // Implementation
+    return 0;
 }
 
 point j_Location (fixed lp_x, fixed lp_y) {
@@ -13595,6 +13832,54 @@ bool j_IsUnitHidden (unit lp_whichUnit) {
     // Automatic Variable Declarations
     // Implementation
     return libNtve_gf_UnitIsHidden(lp_whichUnit);
+}
+
+void j_RemoveGuardPosition (unit lp_hUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    AISetUnitScriptControlled(lp_hUnit, false);
+}
+
+void j_RecycleGuardPosition (unit lp_hUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    AISetUnitScriptControlled(lp_hUnit, true);
+}
+
+void j_RemoveAllGuardPositions (int lp_num) {
+    // Automatic Variable Declarations
+    // Implementation
+    AISetGroupScriptControlled(UnitGroup(null, lp_num, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0), false);
+}
+
+unitgroup j_CreateGroup () {
+    // Automatic Variable Declarations
+    // Implementation
+    return UnitGroupEmpty();
+}
+
+void j_DestroyGroup (unitgroup lp_whichGroup) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitGroupClear(lp_whichGroup);
+}
+
+void j_GroupAddUnit (unitgroup lp_whichGroup, unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitGroupAdd(lp_whichGroup, lp_whichUnit);
+}
+
+void j_GroupRemoveUnit (unitgroup lp_whichGroup, unit lp_whichUnit) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitGroupRemove(lp_whichGroup, lp_whichUnit);
+}
+
+void j_GroupClear (unitgroup lp_whichGroup) {
+    // Automatic Variable Declarations
+    // Implementation
+    UnitGroupClear(lp_whichGroup);
 }
 
 unit j_FirstOfGroup (unitgroup lp_whichGroup) {
@@ -13849,16 +14134,6 @@ bool j_GetSoundIsLoading (structref<libGAWT_gs_j_Sound> lp_soundHandle) {
     return ((lp_soundHandle.lv_transmission != c_invalidTransmissionId) && (lp_soundHandle.lv_durationMS == 0));
 }
 
-void j_RegisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-    // Deprecated
-}
-
-void j_UnregisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-    // Deprecated
-}
-
 void j_SetSoundVolume (structref<libGAWT_gs_j_Sound> lp_soundHandle, int lp_volume) {
     // Variable Declarations
     fixed lv_newVolume;
@@ -13876,10 +14151,6 @@ void j_SetSoundPosition (structref<libGAWT_gs_j_Sound> lp_soundHandle, fixed lp_
     // Automatic Variable Declarations
     // Implementation
     lp_soundHandle.lv_position = libGAWT_gf_ConvertWar3PointXYZ(lp_x, lp_y, lp_z);
-}
-
-void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
-    // Automatic Variable Declarations
 }
 
 void j_AttachSoundToUnit (structref<libGAWT_gs_j_Sound> lp_soundHandle, unit lp_whichUnit) {
@@ -13913,6 +14184,82 @@ int j_GetLocalPlayer () {
     return ObservedPlayerId();
 }
 
+void j_SetPlayerColor (int lp_whichPlayer, int lp_color) {
+    // Automatic Variable Declarations
+    // Implementation
+    PlayerSetColorIndex(lp_whichPlayer, lp_color, false);
+}
+
+void j_SetPlayerAlliance (int lp_sourcePlayer, int lp_otherPlayer, int lp_whichAllianceSetting, bool lp_value) {
+    // Automatic Variable Declarations
+    int autoE1DD5501_val;
+
+    // Implementation
+    autoE1DD5501_val = lp_whichAllianceSetting;
+    if (autoE1DD5501_val == ALLIANCE_RESCUABLE) {
+        BitMaskSetIndex(libGAWT_gv_war3_Players[lp_sourcePlayer].lv_rescuable, lp_otherPlayer, lp_value);
+    }
+    else {
+        PlayerSetAlliance(lp_sourcePlayer, lp_whichAllianceSetting, lp_otherPlayer, lp_value);
+    }
+}
+
+int j_GetPlayerColor (int lp_whichPlayer) {
+    // Automatic Variable Declarations
+    // Implementation
+    return PlayerGetColorIndex(lp_whichPlayer, false);
+}
+
+void j_SetPlayerState (int lp_whichPlayer, int lp_whichPlayerState, int lp_value) {
+    // Variable Declarations
+    bool lv_flag;
+
+    // Automatic Variable Declarations
+    int auto2ED65F6C_val;
+
+    // Variable Initialization
+    lv_flag = (lp_value > 0);
+
+    // Implementation
+    auto2ED65F6C_val = lp_whichPlayerState;
+    if (auto2ED65F6C_val == PLAYER_STATE_GAME_RESULT) {
+        GameOver(lp_whichPlayer, lp_value, false, false);
+    }
+    else if (auto2ED65F6C_val == PLAYER_STATE_RESOURCE_HERO_TOKENS) {
+        libNtve_gf_SetUpgradeLevelForPlayer(lp_whichPlayer, "War3_FreeHeroSlots", lp_value);
+    }
+    else if (auto2ED65F6C_val == PLAYER_STATE_GIVES_BOUNTY) {
+        PlayerSetState(lp_whichPlayer, c_playerStateGivesBounty, lv_flag);
+    }
+    else if (auto2ED65F6C_val == PLAYER_STATE_NO_CREEP_SLEEP) {
+        libGAWT_gv_war3_Players[lp_whichPlayer].lv_creepSleep = lv_flag;
+    }
+    else if (auto2ED65F6C_val == PLAYER_STATE_GOLD_UPKEEP_RATE) {
+        CatalogFieldValueSet(c_gameCatalogRace, PlayerRace(lp_whichPlayer), (("UpkeepTax[" + IntToString(PlayerScoreValueGetAsInt(lp_whichPlayer, "UnitsLostCount")) + "].Tax[Terrazine]")), lp_whichPlayer, FixedToString((lp_value / 100.0), c_fixedPrecisionAny));
+    }
+    else if (auto2ED65F6C_val == PLAYER_STATE_LUMBER_UPKEEP_RATE) {
+        CatalogFieldValueSet(c_gameCatalogRace, PlayerRace(lp_whichPlayer), (("UpkeepTax[" + IntToString(PlayerScoreValueGetAsInt(lp_whichPlayer, "UnitsLostCount")) + "].Tax[Custom]")), lp_whichPlayer, FixedToString((lp_value / 100.0), c_fixedPrecisionAny));
+    }
+    else {
+        if(lp_whichPlayerState<0){
+            return;
+        }
+        PlayerModifyPropertyInt(lp_whichPlayer, lp_whichPlayerState, c_playerPropOperSetTo, lp_value);
+    }
+}
+
+void j_RemovePlayer (int lp_whichPlayer, int lp_gameResult) {
+    // Automatic Variable Declarations
+    // Implementation
+    GameOver(lp_whichPlayer, lp_gameResult, false, false);
+}
+
+void j_SetPlayerHandicapXP (int lp_whichPlayer, fixed lp_handicap) {
+    // Automatic Variable Declarations
+    // Implementation
+    CatalogReferenceSet("Accumulator,War3_PlayerHandicapXP,Amount", lp_whichPlayer, FixedToString(lp_handicap, c_fixedPrecisionAny));
+}
+
 string j_Pow2 (int lp_x) {
     // Automatic Variable Declarations
     // Implementation
@@ -13935,10 +14282,6 @@ int j_GetDefaultDifficulty () {
     // Automatic Variable Declarations
     // Implementation
     return (CatalogFieldValueGetAsInt(c_gameCatalogGame, "Dflt", "DifficultyDefault", c_playerAny));
-}
-
-void j_SetDefaultDifficulty (int lp_g) {
-    // Automatic Variable Declarations
 }
 
 void j_SetGameDifficulty (int lp_whichdifficulty) {
@@ -14154,12 +14497,6 @@ timer j_GetExpiredTimer () {
     return EventTimer();
 }
 
-trigger j_CreateTrigger () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
 void j_DestroyTrigger (trigger lp_whichTrigger) {
     // Automatic Variable Declarations
     // Implementation
@@ -14188,10 +14525,6 @@ bool j_IsTriggerEnabled (trigger lp_whichTrigger) {
     // Automatic Variable Declarations
     // Implementation
     return TriggerIsEnabled(lp_whichTrigger);
-}
-
-void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
-    // Automatic Variable Declarations
 }
 
 unit j_GetFilterUnit () {
@@ -14500,19 +14833,19 @@ int j_ConvertPathingType (int lp_i) {
     return 0;
 }
 
-int j_OrderId (string lp_hbvjkhpwvrflbxqa) {
+int j_OrderId (string lp_rylogonbyqgitiji) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_UnitId (string lp_eedbpqlkgaghwwcb) {
+int j_UnitId (string lp_fjquixuwneemniso) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_AbilityId (string lp_agwvrlirawdsneua) {
+int j_AbilityId (string lp_bnhuckpiwfrrhkxv) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
@@ -14760,14 +15093,6 @@ void j_ForcePlayerStartLocation (int lp_whichPlayer, int lp_startLocIndex) {
     // Automatic Variable Declarations
 }
 
-void j_SetPlayerColor (int lp_whichPlayer, int lp_color) {
-    // Automatic Variable Declarations
-}
-
-void j_SetPlayerAlliance (int lp_sourcePlayer, int lp_otherPlayer, int lp_whichAllianceSetting, bool lp_value) {
-    // Automatic Variable Declarations
-}
-
 void j_SetPlayerTaxRate (int lp_sourcePlayer, int lp_otherPlayer, int lp_whichResource, int lp_rate) {
     // Automatic Variable Declarations
 }
@@ -14788,10 +15113,6 @@ void j_SetPlayerName (int lp_whichPlayer, string lp_name) {
     // Automatic Variable Declarations
 }
 
-void j_SetPlayerOnScoreScreen (int lp_whichPlayer, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
 int j_GetPlayerTeam (int lp_whichPlayer) {
     // Automatic Variable Declarations
     // Implementation
@@ -14799,12 +15120,6 @@ int j_GetPlayerTeam (int lp_whichPlayer) {
 }
 
 int j_GetPlayerStartLocation (int lp_whichPlayer) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-int j_GetPlayerColor (int lp_whichPlayer) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
@@ -14844,68 +15159,6 @@ string j_GetPlayerName (int lp_whichPlayer) {
     // Automatic Variable Declarations
     // Implementation
     return null;
-}
-
-unitgroup j_CreateGroup () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
-void j_DestroyGroup (unitgroup lp_whichGroup) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupAddUnit (unitgroup lp_whichGroup, unit lp_whichUnit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupRemoveUnit (unitgroup lp_whichGroup, unit lp_whichUnit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupClear (unitgroup lp_whichGroup) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsOfType (unitgroup lp_whichGroup, string lp_unitname, string lp_filter) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsOfPlayer (unitgroup lp_whichGroup, int lp_whichPlayer, string lp_filter) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsOfTypeCounted (unitgroup lp_whichGroup, string lp_unitname, string lp_filter, int lp_countLimit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRect (unitgroup lp_whichGroup, region lp_r, string lp_filter) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRectCounted (unitgroup lp_whichGroup, region lp_r, string lp_filter, int lp_countLimit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRange (unitgroup lp_whichGroup, fixed lp_x, fixed lp_y, fixed lp_radius, string lp_filter) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRangeOfLoc (unitgroup lp_whichGroup, point lp_whichLocation, fixed lp_radius, string lp_filter) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRangeCounted (unitgroup lp_whichGroup, fixed lp_x, fixed lp_y, fixed lp_radius, string lp_filter, int lp_countLimit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsInRangeOfLocCounted (unitgroup lp_whichGroup, point lp_whichLocation, fixed lp_radius, string lp_filter, int lp_countLimit) {
-    // Automatic Variable Declarations
-}
-
-void j_GroupEnumUnitsSelected (unitgroup lp_whichGroup, int lp_whichPlayer, string lp_filter) {
-    // Automatic Variable Declarations
 }
 
 bool j_GroupImmediateOrder (unitgroup lp_whichGroup, string lp_order) {
@@ -15204,20 +15457,8 @@ string j_Not (string lp_operand) {
     return null;
 }
 
-string j_Condition (string lp_func) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
-}
-
 void j_DestroyCondition (string lp_c) {
     // Automatic Variable Declarations
-}
-
-string j_Filter (string lp_func) {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
 }
 
 void j_DestroyFilter (string lp_f) {
@@ -15361,7 +15602,7 @@ string j_GetSaveBasicFilename () {
     return null;
 }
 
-void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_ryfslecwkdtiaiqk, int lp_whichPlayerEvent) {
+void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_dtkoiqfypddifiwo, int lp_whichPlayerEvent) {
     // Automatic Variable Declarations
     // Implementation
 }
@@ -17145,10 +17386,6 @@ void j_SetPlayerHandicap (int lp_whichPlayer, fixed lp_handicap) {
     // Automatic Variable Declarations
 }
 
-void j_SetPlayerHandicapXP (int lp_whichPlayer, fixed lp_handicap) {
-    // Automatic Variable Declarations
-}
-
 void j_SetPlayerTechMaxAllowed (int lp_whichPlayer, int lp_techid, int lp_maximum) {
     // Automatic Variable Declarations
 }
@@ -17188,14 +17425,6 @@ void j_CripplePlayer (int lp_whichPlayer, playergroup lp_toWhichPlayers, bool lp
 }
 
 void j_SetPlayerAbilityAvailable (int lp_whichPlayer, int lp_abilid, bool lp_avail) {
-    // Automatic Variable Declarations
-}
-
-void j_SetPlayerState (int lp_whichPlayer, int lp_whichPlayerState, int lp_value) {
-    // Automatic Variable Declarations
-}
-
-void j_RemovePlayer (int lp_whichPlayer, int lp_gameResult) {
     // Automatic Variable Declarations
 }
 
@@ -17263,108 +17492,6 @@ void j_FogModifierStart (revealer lp_whichFogModifier) {
 
 void j_FogModifierStop (revealer lp_whichFogModifier) {
     // Automatic Variable Declarations
-}
-
-int j_VersionGet () {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-bool j_VersionCompatible (int lp_whichVersion) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_VersionSupported (int lp_whichVersion) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_EndGame (bool lp_doScoreScreen) {
-    // Automatic Variable Declarations
-}
-
-void j_ChangeLevel (string lp_newLevel, bool lp_doScoreScreen) {
-    // Automatic Variable Declarations
-}
-
-void j_RestartGame (bool lp_doScoreScreen) {
-    // Automatic Variable Declarations
-}
-
-void j_ReloadGame () {
-    // Automatic Variable Declarations
-}
-
-void j_SetCampaignMenuRace (int lp_r) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCampaignMenuRaceEx (int lp_campaignIndex) {
-    // Automatic Variable Declarations
-}
-
-void j_ForceCampaignSelectScreen () {
-    // Automatic Variable Declarations
-}
-
-void j_LoadGame (string lp_saveFileName, bool lp_doScoreScreen) {
-    // Automatic Variable Declarations
-}
-
-void j_SaveGame (string lp_saveFileName) {
-    // Automatic Variable Declarations
-}
-
-bool j_RenameSaveDirectory (string lp_sourceDirName, string lp_destDirName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_RemoveSaveDirectory (string lp_sourceDirName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_CopySaveGame (string lp_sourceSaveName, string lp_destSaveName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_SaveGameExists (string lp_saveName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_SyncSelections () {
-    // Automatic Variable Declarations
-}
-
-void j_SetFloatGameState (int lp_whichFloatGameState, fixed lp_value) {
-    // Automatic Variable Declarations
-}
-
-fixed j_GetFloatGameState (int lp_whichFloatGameState) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
-}
-
-void j_SetIntegerGameState (int lp_whichIntegerGameState, int lp_value) {
-    // Automatic Variable Declarations
-}
-
-int j_GetIntegerGameState (int lp_whichIntegerGameState) {
-    // Automatic Variable Declarations
-    // Implementation
-    return 0;
 }
 
 void j_SetTutorialCleared (bool lp_cleared) {
@@ -19402,18 +19529,6 @@ int j_GetAIDifficulty (int lp_num) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
-}
-
-void j_RemoveGuardPosition (unit lp_hUnit) {
-    // Automatic Variable Declarations
-}
-
-void j_RecycleGuardPosition (unit lp_hUnit) {
-    // Automatic Variable Declarations
-}
-
-void j_RemoveAllGuardPositions (int lp_num) {
-    // Automatic Variable Declarations
 }
 
 void j_Cheat (string lp_cheatStr) {

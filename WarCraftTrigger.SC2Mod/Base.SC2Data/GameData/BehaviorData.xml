@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Catalog>
+    <CBehaviorVeterancy id="AHer">
+        <XPReceiveFraction>
+            <Fraction value="1">
+                <AccumulatorArray value="War3_PlayerHandicapXP"/>
+            </Fraction>
+        </XPReceiveFraction>
+    </CBehaviorVeterancy>
     <CBehaviorBuff id="SetUnitPathing" parent="War3_Passive">
         <Modification>
             <StateFlags index="SuppressCollision" value="1"/>

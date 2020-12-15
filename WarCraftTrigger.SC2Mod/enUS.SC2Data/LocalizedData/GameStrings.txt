@@ -6,5 +6,6 @@ Name/CameraModelDummy=Camera Model Dummy
 Param/Expression/lib_GAWT_982AE05E=Jass-Galaxy: Cannot do timed camera setup change.
 Param/Expression/lib_GAWT_B026F92F=Jass-Galaxy: Change of Property ~B~ not supported
 Param/Value/lib_GAWT_05963006=Jass-Galaxy: Cannot do timed camera setup targetPosition of  change.
+Param/Value/lib_GAWT_2236EC50=
 Tip/CameraModelDummy=Hire Camera Model Dummy
 Ubertip/CameraModelDummy=

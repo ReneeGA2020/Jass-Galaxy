@@ -1,4 +1,7 @@
-﻿Behavior/EditorPrefix/SetUnitPathing=Global -
+﻿Accumulator/EditorPrefix/War3_PlayerHandicapXP=Global -
+Accumulator/EditorSuffix/War3_PlayerHandicapXP=(Trigger)
+Accumulator/Name/War3_PlayerHandicapXP=War3 Player Handicap XP
+Behavior/EditorPrefix/SetUnitPathing=Global -
 Behavior/EditorSuffix/SetUnitPathing=(Trigger)
 Effect/EditorPrefix/War3_UnitRemoveBuffs_Negative=Global -
 Effect/EditorPrefix/War3_UnitRemoveBuffs_Positive=Global -
