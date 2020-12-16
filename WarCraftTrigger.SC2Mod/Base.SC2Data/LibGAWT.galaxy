@@ -122,6 +122,11 @@ typedef funcref<BoolExpression> boolexpr;
 typedef boolexpr conditionfunc;
 typedef boolexpr filterfunc;
 typedef funcref<Code> code;
+const int c_unitAttributeAncientWar3=c_unitAttributePsionic;
+const int c_unitAttributeSapperWar3=c_unitAttributeLight;
+const int c_unitStateEtherealWar3=c_unitStateInStasis;
+const int c_unitStateImmunityWar3=c_unitStateStoppable;
+const int c_targetFilterGroundWar3=57;
 unitfilter GAw3_DefaultFilter = UnitFilter(0, 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterDestructible) | (1 << c_targetFilterItem), 0);
 unitfilter GAw3_DefaultFilterNoHidden = UnitFilter(0, 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterDestructible) | (1 << c_targetFilterItem), (1 << (c_targetFilterHidden - 32)));
 event GAw3_EventHandleMax=0;
@@ -12984,6 +12989,7 @@ void libGAWT_InitCustomScript () {
     InitCustomTriggers();
 }
 
+// Presets
 // Functions
 void libGAWT_gf_SetWar3MapOrigin (fixed lp_x, fixed lp_y) {
     // Automatic Variable Declarations
@@ -12993,6 +12999,90 @@ void libGAWT_gf_SetWar3MapOrigin (fixed lp_x, fixed lp_y) {
     libGAWT_gv_war3_mapOriginY = lp_y;
     libGAWT_gv_war3_mapOriginXY[libGAWT_gv__X] = lp_x;
     libGAWT_gv_war3_mapOriginXY[libGAWT_gv__Y] = lp_y;
+}
+
+bool libGAWT_gf_UnitHasMeleeRangedWeapon (unit lp_unit, bool lp_melee) {
+    // Variable Declarations
+    int lv_i;
+    string lv_itWeapon;
+
+    // Automatic Variable Declarations
+    int autoB04B8149_ae;
+    const int autoB04B8149_ai = 1;
+
+    // Variable Initialization
+
+    // Implementation
+    autoB04B8149_ae = UnitWeaponCount(lp_unit);
+    lv_i = 1;
+    for ( ; ( (autoB04B8149_ai >= 0 && lv_i <= autoB04B8149_ae) || (autoB04B8149_ai < 0 && lv_i >= autoB04B8149_ae) ) ; lv_i += autoB04B8149_ai ) {
+        if ((UnitWeaponIsEnabled(lp_unit, lv_i) == false)) {
+            continue;
+        }
+
+        lv_itWeapon = UnitWeaponGet(lp_unit, lv_i);
+        if ((GAw3_WeaponIsMelee(lv_itWeapon) == lp_melee)) {
+            return true;
+        }
+
+    }
+    return false;
+}
+
+bool libGAWT_gf_UnitHasBehaviorOfCategory (unit lp_unit, int lp_category) {
+    // Variable Declarations
+    int lv_i;
+    string lv_itBehavior;
+
+    // Automatic Variable Declarations
+    int autoBA33141E_ae;
+    const int autoBA33141E_ai = 1;
+
+    // Variable Initialization
+
+    // Implementation
+    autoBA33141E_ae = UnitBehaviorCountAll(lp_unit);
+    lv_i = 1;
+    for ( ; ( (autoBA33141E_ai >= 0 && lv_i <= autoBA33141E_ae) || (autoBA33141E_ai < 0 && lv_i >= autoBA33141E_ae) ) ; lv_i += autoBA33141E_ai ) {
+        lv_itBehavior = UnitBehaviorGet(lp_unit, 1);
+        if ((UnitBehaviorEnabled(lp_unit, lv_itBehavior) == false)) {
+            continue;
+        }
+
+        if ((CatalogFieldValueGet(c_gameCatalogBehavior, lv_itBehavior, "BehaviorCategories[" + IntToString((lp_category)) + "]", c_playerAny) == "1")) {
+            return true;
+        }
+
+    }
+    return false;
+}
+
+bool libGAWT_gf_UnitCanAttack (unit lp_unit, int lp_filter) {
+    // Variable Declarations
+    int lv_i;
+    string lv_itWeapon;
+
+    // Automatic Variable Declarations
+    int auto3DFB2EE9_ae;
+    const int auto3DFB2EE9_ai = 1;
+
+    // Variable Initialization
+
+    // Implementation
+    auto3DFB2EE9_ae = UnitWeaponCount(lp_unit);
+    lv_i = 1;
+    for ( ; ( (auto3DFB2EE9_ai >= 0 && lv_i <= auto3DFB2EE9_ae) || (auto3DFB2EE9_ai < 0 && lv_i >= auto3DFB2EE9_ae) ) ; lv_i += auto3DFB2EE9_ai ) {
+        if ((UnitWeaponIsEnabled(lp_unit, lv_i) == false)) {
+            continue;
+        }
+
+        lv_itWeapon = UnitWeaponGet(lp_unit, lv_i);
+        if ((UnitWeaponCheck(lp_unit, lv_i, lp_filter) == true)) {
+            return true;
+        }
+
+    }
+    return false;
 }
 
 fixed libGAWT_gf_ConvertWar3Distance (fixed lp_inDistance) {
@@ -13152,98 +13242,6 @@ fixed libGAWT_gf_PointGetX (point lp_p, int lp_xY) {
     }
 
     return PointGetY(lp_p);
-}
-
-void j_SetPlayerOnScoreScreen (int lp_whichPlayer, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCinematicCamera (string lp_cameraModelFile) {
-    // Automatic Variable Declarations
-    // Deprecated
-    CameraUseModel(j_GetLocalPlayer(), UnitLastCreated(), null, 0.0);
-}
-
-void j_CameraSetSmoothingFactor (fixed lp_factor) {
-    // Automatic Variable Declarations
-}
-
-void j_ReloadGame () {
-    // Automatic Variable Declarations
-    // Deprecated
-    RestartGame(PlayerGroupAll());
-}
-
-void j_SetCampaignMenuRace (int lp_r) {
-    // Automatic Variable Declarations
-}
-
-void j_SetCampaignMenuRaceEx (int lp_campaignIndex) {
-    // Automatic Variable Declarations
-}
-
-void j_ForceCampaignSelectScreen () {
-    // Automatic Variable Declarations
-}
-
-void j_LoadGame (string lp_saveFileName, bool lp_doScoreScreen) {
-    // Automatic Variable Declarations
-}
-
-bool j_RenameSaveDirectory (string lp_sourceDirName, string lp_destDirName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_RemoveSaveDirectory (string lp_sourceDirName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_CopySaveGame (string lp_sourceSaveName, string lp_destSaveName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_SaveGameExists (string lp_saveName) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-void j_SyncSelections () {
-    // Automatic Variable Declarations
-}
-
-void j_RegisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-    // Deprecated
-}
-
-void j_UnregisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
-    // Automatic Variable Declarations
-    // Deprecated
-}
-
-void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
-    // Automatic Variable Declarations
-}
-
-void j_SetDefaultDifficulty (int lp_g) {
-    // Automatic Variable Declarations
-}
-
-void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
-    // Automatic Variable Declarations
-}
-
-trigger j_CreateTrigger () {
-    // Automatic Variable Declarations
-    // Implementation
-    return null;
 }
 
 void j_UnitRemoveBuffs (unit lp_whichUnit, bool lp_removePositive, bool lp_removeNegative) {
@@ -13850,6 +13848,100 @@ void j_RemoveAllGuardPositions (int lp_num) {
     // Automatic Variable Declarations
     // Implementation
     AISetGroupScriptControlled(UnitGroup(null, lp_num, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0), false);
+}
+
+bool j_IsUnitType (unit lp_whichUnit, int lp_whichUnitType) {
+    // Automatic Variable Declarations
+    int auto723399A8_val;
+
+    // Implementation
+        string ut=UnitGetType(lp_whichUnit);
+        int wc=UnitWeaponCount(lp_whichUnit);
+        if(lp_whichUnitType==UNIT_TYPE_DEAD){
+            return UnitTestState(lp_whichUnit,c_unitStateIsDead);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_STUNNED){
+            return UnitTestState(lp_whichUnit,c_unitStateStunned);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_RESISTANT){
+            return UnitTestState(lp_whichUnit,c_unitStateResistant);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_ETHEREAL){
+            return UnitTestState(lp_whichUnit,c_unitStateEtherealWar3);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_MAGIC_IMMUNE){
+            return !UnitTestState(lp_whichUnit,c_unitStateImmunityWar3);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_FLYING){
+            return UnitMoverExists(lp_whichUnit, "Fly");
+        }
+        if(lp_whichUnitType==UNIT_TYPE_GROUND){
+            return UnitMoverExists(lp_whichUnit,"Ground")||UnitMoverExists(lp_whichUnit,"horse")||UnitMoverExists(lp_whichUnit,"hover");
+        }
+        if(lp_whichUnitType==UNIT_TYPE_GIANT){
+            return UnitHasBehavior(lp_whichUnit,"giant");
+        }
+        if(lp_whichUnitType==UNIT_TYPE_UNDEAD){
+            return UnitHasBehavior(lp_whichUnit,"undead");
+        }
+        if(lp_whichUnitType==UNIT_TYPE_UNDEAD){
+            return UnitHasBehavior(lp_whichUnit,"tauren");
+        }
+        if(lp_whichUnitType==UNIT_TYPE_PEON){
+            return UnitTypeTestFlag(ut,c_unitFlagWorker);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_HERO){
+            return UnitTypeTestFlag(ut,c_unitFlagHero);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_STRUCTURE){
+            return UnitTypeTestAttribute(ut,c_unitAttributeStructure);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_TOWNHALL){
+            return UnitTypeTestFlag(ut,c_unitFlagPenaltyRevealed);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_SUMMONED){
+            return UnitTypeTestAttribute(ut,c_unitAttributeSummoned);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_MECHANICAL){
+            return UnitTypeTestAttribute(ut,c_unitAttributeMechanical);
+        }
+        if(lp_whichUnitType==UNIT_TYPE_ANCIENT){
+            return UnitTypeTestAttribute(ut,c_unitAttributeAncientWar3);
+        }
+    	if(lp_whichUnitType==UNIT_TYPE_SAPPER){
+            return UnitTypeTestAttribute(ut,c_unitAttributeSapperWar3);
+    	}
+    auto723399A8_val = lp_whichUnitType;
+    if (auto723399A8_val == UNIT_TYPE_ATTACKS_FLYING) {
+        return libGAWT_gf_UnitCanAttack(lp_whichUnit, c_targetFilterAir);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_ATTACKS_GROUND) {
+        return libGAWT_gf_UnitCanAttack(lp_whichUnit, c_targetFilterGroundWar3);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_MELEE_ATTACKER) {
+        return libGAWT_gf_UnitHasMeleeRangedWeapon(lp_whichUnit, true);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_RANGED_ATTACKER) {
+        return libGAWT_gf_UnitHasMeleeRangedWeapon(lp_whichUnit, false);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_PLAGUED) {
+        return libGAWT_gf_UnitHasBehaviorOfCategory(lp_whichUnit, c_unitBehaviorFlagUser3);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_SNARED) {
+        return libGAWT_gf_UnitHasBehaviorOfCategory(lp_whichUnit, c_unitBehaviorFlagUser1);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_POLYMORPHED) {
+        return libGAWT_gf_UnitHasBehaviorOfCategory(lp_whichUnit, c_unitBehaviorFlagUser4);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_POISONED) {
+        return libGAWT_gf_UnitHasBehaviorOfCategory(lp_whichUnit, c_unitBehaviorFlagUser2);
+    }
+    else if (auto723399A8_val == UNIT_TYPE_SLEEPING) {
+        return libGAWT_gf_UnitHasBehaviorOfCategory(lp_whichUnit, c_unitBehaviorFlagUser5);
+    }
+    else {
+    }
+    return false;
 }
 
 unitgroup j_CreateGroup () {
@@ -14569,6 +14661,98 @@ unit j_GetEnumItem () {
         return DataTableGetUnit(false,"GAw3_EnumItem_"+IntToString(Stack));
 }
 
+void j_SetPlayerOnScoreScreen (int lp_whichPlayer, bool lp_flag) {
+    // Automatic Variable Declarations
+}
+
+void j_SetCinematicCamera (string lp_cameraModelFile) {
+    // Automatic Variable Declarations
+    // Deprecated
+    CameraUseModel(j_GetLocalPlayer(), UnitLastCreated(), null, 0.0);
+}
+
+void j_CameraSetSmoothingFactor (fixed lp_factor) {
+    // Automatic Variable Declarations
+}
+
+void j_ReloadGame () {
+    // Automatic Variable Declarations
+    // Deprecated
+    RestartGame(PlayerGroupAll());
+}
+
+void j_SetCampaignMenuRace (int lp_r) {
+    // Automatic Variable Declarations
+}
+
+void j_SetCampaignMenuRaceEx (int lp_campaignIndex) {
+    // Automatic Variable Declarations
+}
+
+void j_ForceCampaignSelectScreen () {
+    // Automatic Variable Declarations
+}
+
+void j_LoadGame (string lp_saveFileName, bool lp_doScoreScreen) {
+    // Automatic Variable Declarations
+}
+
+bool j_RenameSaveDirectory (string lp_sourceDirName, string lp_destDirName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_RemoveSaveDirectory (string lp_sourceDirName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_CopySaveGame (string lp_sourceSaveName, string lp_destSaveName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+bool j_SaveGameExists (string lp_saveName) {
+    // Automatic Variable Declarations
+    // Implementation
+    return false;
+}
+
+void j_SyncSelections () {
+    // Automatic Variable Declarations
+}
+
+void j_RegisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_UnregisterStackedSound (structref<libGAWT_gs_j_Sound> lp_soundHandle, bool lp_byPosition, fixed lp_rectwidth, fixed lp_rectheight) {
+    // Automatic Variable Declarations
+    // Deprecated
+}
+
+void j_SetSoundVelocity (sound lp_soundHandle, fixed lp_x, fixed lp_y, fixed lp_z) {
+    // Automatic Variable Declarations
+}
+
+void j_SetDefaultDifficulty (int lp_g) {
+    // Automatic Variable Declarations
+}
+
+void j_TriggerWaitOnSleeps (trigger lp_whichTrigger, bool lp_flag) {
+    // Automatic Variable Declarations
+}
+
+trigger j_CreateTrigger () {
+    // Automatic Variable Declarations
+    // Implementation
+    return null;
+}
+
 int j_ConvertRace (int lp_i) {
     // Automatic Variable Declarations
     // Implementation
@@ -14833,19 +15017,19 @@ int j_ConvertPathingType (int lp_i) {
     return 0;
 }
 
-int j_OrderId (string lp_rylogonbyqgitiji) {
+int j_OrderId (string lp_wylxakujsfrcyqjn) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_UnitId (string lp_fjquixuwneemniso) {
+int j_UnitId (string lp_usprlrgsgfjqrcmd) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
 }
 
-int j_AbilityId (string lp_bnhuckpiwfrrhkxv) {
+int j_AbilityId (string lp_mclisxelofptpakl) {
     // Automatic Variable Declarations
     // Implementation
     return 0;
@@ -15602,7 +15786,7 @@ string j_GetSaveBasicFilename () {
     return null;
 }
 
-void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_dtkoiqfypddifiwo, int lp_whichPlayerEvent) {
+void j_TriggerRegisterPlayerEvent (trigger t, trigger lp_whichTrigger, int lp_whcmojxqtrfheqgq, int lp_whichPlayerEvent) {
     // Automatic Variable Declarations
     // Implementation
 }
@@ -16913,12 +17097,6 @@ bool j_IsUnitSelected (unit lp_whichUnit, int lp_whichPlayer) {
 }
 
 bool j_IsUnitRace (unit lp_whichUnit, int lp_whichRace) {
-    // Automatic Variable Declarations
-    // Implementation
-    return false;
-}
-
-bool j_IsUnitType (unit lp_whichUnit, int lp_whichUnitType) {
     // Automatic Variable Declarations
     // Implementation
     return false;

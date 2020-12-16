@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Catalog>
+    <CBehaviorBuff id="ACsl@BuffSleep">
+        <BehaviorCategories index="User5" value="1"/>
+    </CBehaviorBuff>
+    <CBehaviorBuff id="ACsp@Snooze">
+        <BehaviorCategories index="User5" value="1"/>
+    </CBehaviorBuff>
     <CBehaviorVeterancy id="AHer">
         <XPReceiveFraction>
             <Fraction value="1">
@@ -7,6 +13,12 @@
             </Fraction>
         </XPReceiveFraction>
     </CBehaviorVeterancy>
+    <CBehaviorBuff id="AUsl@BuffSleep">
+        <BehaviorCategories index="User5" value="1"/>
+    </CBehaviorBuff>
+    <CBehaviorBuff id="Asla@Snooze">
+        <BehaviorCategories index="User5" value="1"/>
+    </CBehaviorBuff>
     <CBehaviorBuff id="SetUnitPathing" parent="War3_Passive">
         <Modification>
             <StateFlags index="SuppressCollision" value="1"/>

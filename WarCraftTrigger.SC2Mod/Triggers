@@ -108,6 +108,11 @@
                 typedef boolexpr conditionfunc;
                 typedef boolexpr filterfunc;
                 typedef funcref&lt;Code&gt; code;
+                const int c_unitAttributeAncientWar3=c_unitAttributePsionic;
+                const int c_unitAttributeSapperWar3=c_unitAttributeLight;
+                const int c_unitStateEtherealWar3=c_unitStateInStasis;
+                const int c_unitStateImmunityWar3=c_unitStateStoppable;
+                const int c_targetFilterGroundWar3=57;
                 unitfilter GAw3_DefaultFilter = UnitFilter(0, 0, (1 &lt;&lt; c_targetFilterMissile) | (1 &lt;&lt; c_targetFilterDestructible) | (1 &lt;&lt; c_targetFilterItem), 0);
                 unitfilter GAw3_DefaultFilterNoHidden = UnitFilter(0, 0, (1 &lt;&lt; c_targetFilterMissile) | (1 &lt;&lt; c_targetFilterDestructible) | (1 &lt;&lt; c_targetFilterItem), (1 &lt;&lt; (c_targetFilterHidden - 32)));
                 event GAw3_EventHandleMax=0;
@@ -633,6 +638,7 @@
             <InitFunc>GAw3_Def_Init</InitFunc>
         </Element>
         <Element Type="Category" Id="864F34E4">
+            <Item Type="Preset" Library="GAWT" Id="280F6A21"/>
             <Item Type="Variable" Library="GAWT" Id="37862292"/>
             <Item Type="Variable" Library="GAWT" Id="6B8C902B"/>
             <Item Type="Variable" Library="GAWT" Id="C9216C24"/>
@@ -640,6 +646,10 @@
             <Item Type="FunctionDef" Library="GAWT" Id="4F2A6A46"/>
             <Item Type="FunctionDef" Library="GAWT" Id="054144A9"/>
             <Item Type="FunctionDef" Library="GAWT" Id="08D82B2E"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="C376FCE2"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="59B86C13"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="A5C57778"/>
             <Item Type="FunctionDef" Library="GAWT" Id="B7356C75"/>
             <Item Type="FunctionDef" Library="GAWT" Id="69B68BFB"/>
             <Item Type="FunctionDef" Library="GAWT" Id="20D8D62E"/>
@@ -673,6 +683,19 @@
             <Item Type="CustomScript" Library="GAWT" Id="30721FF8"/>
             <Item Type="Variable" Library="GAWT" Id="CC0C0881"/>
             <Item Type="FunctionDef" Library="GAWT" Id="6AED010C"/>
+        </Element>
+        <Element Type="Preset" Id="280F6A21">
+            <Identifier>UnitFilterType</Identifier>
+            <Label Type="Label" Library="Ntve" Id="00000007"/>
+            <PresetCustom/>
+            <BaseType Value="int"/>
+            <PresetGenConstVar/>
+            <PresetExtends Type="Preset" Library="Ntve" Id="00000073"/>
+            <Item Type="PresetValue" Library="GAWT" Id="472A93DE"/>
+        </Element>
+        <Element Type="PresetValue" Id="472A93DE">
+            <Identifier>Invulnerable</Identifier>
+            <Value>c_targetFilterGroundWar3</Value>
         </Element>
         <Element Type="Variable" Id="37862292">
             <Internal/>
@@ -881,6 +904,699 @@
             <ParameterType>
                 <Type Value="int"/>
             </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="C376FCE2">
+            <Identifier>GAw3_WeaponIsMelee</Identifier>
+            <Label Type="Label" Library="Ntve" Id="00000007"/>
+            <FlagCall/>
+            <FlagNative/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="50B70775"/>
+        </Element>
+        <Element Type="ParamDef" Id="50B70775">
+            <ParameterType>
+                <Type Value="gamelink"/>
+                <GameType Value="Weapon"/>
+            </ParameterType>
+            <ParamFlagPreload/>
+            <Default Type="Param" Library="GAWT" Id="AA58B3D4"/>
+        </Element>
+        <Element Type="Param" Id="AA58B3D4">
+            <Preset Type="PresetValue" Library="Ntve" Id="C9DCA6C0"/>
+        </Element>
+        <Element Type="FunctionDef" Id="59B86C13">
+            <Label Type="Label" Library="Ntve" Id="00000007"/>
+            <FlagCall/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="CA5FCBBF"/>
+            <Variable Type="Variable" Library="GAWT" Id="56E0BE99"/>
+            <Variable Type="Variable" Library="GAWT" Id="A6B1BFB5"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B04B8149"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E020F7FD"/>
+        </Element>
+        <Element Type="ParamDef" Id="D50E0AC1">
+            <ParameterType>
+                <Type Value="unit"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="4DC56DD8"/>
+        </Element>
+        <Element Type="Param" Id="4DC56DD8">
+            <Preset Type="PresetValue" Library="Ntve" Id="D6EA4D09"/>
+        </Element>
+        <Element Type="ParamDef" Id="CA5FCBBF">
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="D038CACD"/>
+        </Element>
+        <Element Type="Param" Id="D038CACD">
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="Variable" Id="56E0BE99">
+            <VariableType>
+                <Type Value="int"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="12103A69"/>
+        </Element>
+        <Element Type="Param" Id="12103A69">
+            <Value>0</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Variable" Id="A6B1BFB5">
+            <VariableType>
+                <Type Value="gamelink"/>
+                <GameType Value="Weapon"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="0CD1C0F6"/>
+        </Element>
+        <Element Type="Param" Id="0CD1C0F6">
+            <Preset Type="PresetValue" Library="Ntve" Id="C9DCA6C0"/>
+        </Element>
+        <Element Type="FunctionCall" Id="B04B8149">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="66474248"/>
+            <Parameter Type="Param" Library="GAWT" Id="E356F17C"/>
+            <Parameter Type="Param" Library="GAWT" Id="8769C373"/>
+            <Parameter Type="Param" Library="GAWT" Id="17311FF8"/>
+            <Parameter Type="Param" Library="GAWT" Id="EF8EA59B"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="9AD203F7"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="897169F1"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="FAE05D05"/>
+        </Element>
+        <Element Type="Param" Id="E356F17C">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F13E2CDE"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="8769C373">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="C25E6187"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="C4ACB401"/>
+        </Element>
+        <Element Type="FunctionCall" Id="C4ACB401">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="7045D649"/>
+            <Parameter Type="Param" Library="GAWT" Id="343AE0D9"/>
+        </Element>
+        <Element Type="Param" Id="343AE0D9">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="DCD00193"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+        </Element>
+        <Element Type="Param" Id="17311FF8">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F3144A4A"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="EF8EA59B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="8CB41668"/>
+            <Variable Type="Variable" Library="GAWT" Id="56E0BE99"/>
+        </Element>
+        <Element Type="FunctionCall" Id="9AD203F7">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B31E1D42"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="2D5D8C1E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="B31E1D42">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="268BBACB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+        </Element>
+        <Element Type="FunctionCall" Id="2D5D8C1E">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="6E696022"/>
+            <Parameter Type="Param" Library="GAWT" Id="128F19A6"/>
+            <Parameter Type="Param" Library="GAWT" Id="600A2441"/>
+        </Element>
+        <Element Type="Param" Id="6E696022">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E7562D58"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E7562D58">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="981AB385"/>
+            <Parameter Type="Param" Library="GAWT" Id="8805F997"/>
+            <Parameter Type="Param" Library="GAWT" Id="92A4A9C1"/>
+        </Element>
+        <Element Type="Param" Id="8805F997">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="0067DD7D"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+        </Element>
+        <Element Type="Param" Id="92A4A9C1">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="502F3391"/>
+            <Variable Type="Variable" Library="GAWT" Id="56E0BE99"/>
+        </Element>
+        <Element Type="Param" Id="128F19A6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="600A2441">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="897169F1">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000136"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <Parameter Type="Param" Library="GAWT" Id="178F2D41"/>
+            <Parameter Type="Param" Library="GAWT" Id="0EFE3A84"/>
+        </Element>
+        <Element Type="Param" Id="178F2D41">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000219"/>
+            <Variable Type="Variable" Library="GAWT" Id="A6B1BFB5"/>
+        </Element>
+        <Element Type="Param" Id="0EFE3A84">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000220"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="79E474C2"/>
+        </Element>
+        <Element Type="FunctionCall" Id="79E474C2">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="E8D948E0"/>
+            <Parameter Type="Param" Library="GAWT" Id="FFEBFC98"/>
+            <Parameter Type="Param" Library="GAWT" Id="36A3815B"/>
+        </Element>
+        <Element Type="Param" Id="FFEBFC98">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="A65A0F51"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+        </Element>
+        <Element Type="Param" Id="36A3815B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="AA194FFE"/>
+            <Variable Type="Variable" Library="GAWT" Id="56E0BE99"/>
+        </Element>
+        <Element Type="FunctionCall" Id="FAE05D05">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="30784D7E"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="C62E756A"/>
+        </Element>
+        <Element Type="FunctionCall" Id="30784D7E">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+            <Parameter Type="Param" Library="GAWT" Id="78682C23"/>
+        </Element>
+        <Element Type="Param" Id="78682C23">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>true</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="C62E756A">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="5F5DDB3F"/>
+            <Parameter Type="Param" Library="GAWT" Id="203C41F5"/>
+            <Parameter Type="Param" Library="GAWT" Id="05A4968D"/>
+        </Element>
+        <Element Type="Param" Id="5F5DDB3F">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="57C23AFA"/>
+        </Element>
+        <Element Type="FunctionCall" Id="57C23AFA">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="C376FCE2"/>
+            <Parameter Type="Param" Library="GAWT" Id="632BD22F"/>
+        </Element>
+        <Element Type="Param" Id="632BD22F">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="50B70775"/>
+            <Variable Type="Variable" Library="GAWT" Id="A6B1BFB5"/>
+        </Element>
+        <Element Type="Param" Id="203C41F5">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="05A4968D">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="CA5FCBBF"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E020F7FD">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <Parameter Type="Param" Library="GAWT" Id="2932E78C"/>
+        </Element>
+        <Element Type="Param" Id="2932E78C">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionDef" Id="553A134A">
+            <Label Type="Label" Library="Ntve" Id="00000007"/>
+            <FlagCall/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Variable Type="Variable" Library="GAWT" Id="5B5A653E"/>
+            <Variable Type="Variable" Library="GAWT" Id="32A850E2"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="BA33141E"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="7E5918FF"/>
+        </Element>
+        <Element Type="ParamDef" Id="AED775D8">
+            <ParameterType>
+                <Type Value="unit"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="E61F026A"/>
+        </Element>
+        <Element Type="Param" Id="E61F026A">
+            <Preset Type="PresetValue" Library="Ntve" Id="D6EA4D09"/>
+        </Element>
+        <Element Type="ParamDef" Id="AF5C870A">
+            <ParameterType>
+                <Type Value="preset"/>
+                <TypeElement Type="Preset" Library="Ntve" Id="7B410265"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="6A4295B2"/>
+        </Element>
+        <Element Type="Param" Id="6A4295B2">
+            <Preset Type="PresetValue" Library="Ntve" Id="82F299DC"/>
+        </Element>
+        <Element Type="Variable" Id="5B5A653E">
+            <VariableType>
+                <Type Value="int"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="939F9E3A"/>
+        </Element>
+        <Element Type="Param" Id="939F9E3A">
+            <Value>0</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Variable" Id="32A850E2">
+            <VariableType>
+                <Type Value="gamelink"/>
+                <GameType Value="Behavior"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="7744AD45"/>
+        </Element>
+        <Element Type="Param" Id="7744AD45">
+            <Preset Type="PresetValue" Library="Ntve" Id="C9DCA6C0"/>
+        </Element>
+        <Element Type="FunctionCall" Id="BA33141E">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="66474248"/>
+            <Parameter Type="Param" Library="GAWT" Id="753C8B5E"/>
+            <Parameter Type="Param" Library="GAWT" Id="8C015306"/>
+            <Parameter Type="Param" Library="GAWT" Id="3E27D702"/>
+            <Parameter Type="Param" Library="GAWT" Id="1AF2D290"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3DEE82CA"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CACD56DD"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="59A80A5D"/>
+        </Element>
+        <Element Type="Param" Id="753C8B5E">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F13E2CDE"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="8C015306">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="C25E6187"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E13786F2"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E13786F2">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="2560791C"/>
+            <Parameter Type="Param" Library="GAWT" Id="4693F335"/>
+        </Element>
+        <Element Type="Param" Id="4693F335">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="464A9E45"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+        </Element>
+        <Element Type="Param" Id="3E27D702">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F3144A4A"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="1AF2D290">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="8CB41668"/>
+            <Variable Type="Variable" Library="GAWT" Id="5B5A653E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="3DEE82CA">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000136"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <Parameter Type="Param" Library="GAWT" Id="0C704F7C"/>
+            <Parameter Type="Param" Library="GAWT" Id="E9BB8D19"/>
+        </Element>
+        <Element Type="Param" Id="0C704F7C">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000219"/>
+            <Variable Type="Variable" Library="GAWT" Id="32A850E2"/>
+        </Element>
+        <Element Type="Param" Id="E9BB8D19">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000220"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="10F7425B"/>
+        </Element>
+        <Element Type="FunctionCall" Id="10F7425B">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000387"/>
+            <Parameter Type="Param" Library="GAWT" Id="84A7967D"/>
+            <Parameter Type="Param" Library="GAWT" Id="001A196E"/>
+        </Element>
+        <Element Type="Param" Id="84A7967D">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000767"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+        </Element>
+        <Element Type="Param" Id="001A196E">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000768"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="FunctionCall" Id="CACD56DD">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="5A127FF9"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="5EE492F9"/>
+        </Element>
+        <Element Type="FunctionCall" Id="5A127FF9">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="268BBACB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+        </Element>
+        <Element Type="FunctionCall" Id="5EE492F9">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="A65906C6"/>
+            <Parameter Type="Param" Library="GAWT" Id="0EECD5E4"/>
+            <Parameter Type="Param" Library="GAWT" Id="15023419"/>
+        </Element>
+        <Element Type="Param" Id="A65906C6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CF6CA513"/>
+        </Element>
+        <Element Type="FunctionCall" Id="CF6CA513">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="6C8E411D"/>
+            <Parameter Type="Param" Library="GAWT" Id="14B14555"/>
+            <Parameter Type="Param" Library="GAWT" Id="723DF69C"/>
+        </Element>
+        <Element Type="Param" Id="14B14555">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="A218721D"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+        </Element>
+        <Element Type="Param" Id="723DF69C">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="28250438"/>
+            <Variable Type="Variable" Library="GAWT" Id="32A850E2"/>
+        </Element>
+        <Element Type="Param" Id="0EECD5E4">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="15023419">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="59A80A5D">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="6A7CDD63"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3B8C452A"/>
+        </Element>
+        <Element Type="FunctionCall" Id="6A7CDD63">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+            <Parameter Type="Param" Library="GAWT" Id="D084FA46"/>
+        </Element>
+        <Element Type="Param" Id="D084FA46">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>true</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="3B8C452A">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="7E1885C4"/>
+            <Parameter Type="Param" Library="GAWT" Id="3317213B"/>
+            <Parameter Type="Param" Library="GAWT" Id="184848DF"/>
+        </Element>
+        <Element Type="Param" Id="7E1885C4">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="AAC3F47C"/>
+        </Element>
+        <Element Type="FunctionCall" Id="AAC3F47C">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000383"/>
+            <Parameter Type="Param" Library="GAWT" Id="C0F14033"/>
+            <Parameter Type="Param" Library="GAWT" Id="920F69E8"/>
+            <Parameter Type="Param" Library="GAWT" Id="51424F47"/>
+            <Parameter Type="Param" Library="GAWT" Id="B7524704"/>
+        </Element>
+        <Element Type="Param" Id="C0F14033">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000750"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="2999701E"/>
+        </Element>
+        <Element Type="Param" Id="920F69E8">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000747"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="00000515"/>
+        </Element>
+        <Element Type="Param" Id="51424F47">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000748"/>
+            <Variable Type="Variable" Library="GAWT" Id="32A850E2"/>
+        </Element>
+        <Element Type="Param" Id="B7524704">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000749"/>
+            <Value>BehaviorCategories[0]</Value>
+            <ValueType Type="catalogfieldpath"/>
+            <ValueContext Value="CBehaviorBuff"/>
+            <ValueParam Type="Param" Library="GAWT" Id="0314E2B4"/>
+        </Element>
+        <Element Type="Param" Id="0314E2B4">
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="ADEA177B"/>
+        </Element>
+        <Element Type="FunctionCall" Id="ADEA177B">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="FC63B7AA"/>
+            <Parameter Type="Param" Library="GAWT" Id="E46DA95C"/>
+        </Element>
+        <Element Type="Param" Id="E46DA95C">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="86234016"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+        </Element>
+        <Element Type="Param" Id="3317213B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="184848DF">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Value>1</Value>
+            <ValueType Type="string"/>
+        </Element>
+        <Element Type="FunctionCall" Id="7E5918FF">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <Parameter Type="Param" Library="GAWT" Id="766AAD7B"/>
+        </Element>
+        <Element Type="Param" Id="766AAD7B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionDef" Id="A5C57778">
+            <Label Type="Label" Library="Ntve" Id="00000007"/>
+            <FlagCall/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="A907444B"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AE81372E"/>
+            <Variable Type="Variable" Library="GAWT" Id="9BA1F723"/>
+            <Variable Type="Variable" Library="GAWT" Id="FEFF4526"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3DFB2EE9"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="7863EAB0"/>
+        </Element>
+        <Element Type="ParamDef" Id="A907444B">
+            <ParameterType>
+                <Type Value="unit"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="06730776"/>
+        </Element>
+        <Element Type="Param" Id="06730776">
+            <Preset Type="PresetValue" Library="Ntve" Id="D6EA4D09"/>
+        </Element>
+        <Element Type="ParamDef" Id="AE81372E">
+            <ParameterType>
+                <Type Value="preset"/>
+                <TypeElement Type="Preset" Library="Ntve" Id="00000073"/>
+            </ParameterType>
+            <Default Type="Param" Library="GAWT" Id="A07CEBBF"/>
+        </Element>
+        <Element Type="Param" Id="A07CEBBF">
+            <Preset Type="PresetValue" Library="Ntve" Id="00000464"/>
+        </Element>
+        <Element Type="Variable" Id="9BA1F723">
+            <VariableType>
+                <Type Value="int"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="5B7A1932"/>
+        </Element>
+        <Element Type="Param" Id="5B7A1932">
+            <Value>0</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Variable" Id="FEFF4526">
+            <VariableType>
+                <Type Value="gamelink"/>
+                <GameType Value="Weapon"/>
+            </VariableType>
+            <Value Type="Param" Library="GAWT" Id="2C3DAD7B"/>
+        </Element>
+        <Element Type="Param" Id="2C3DAD7B">
+            <Preset Type="PresetValue" Library="Ntve" Id="C9DCA6C0"/>
+        </Element>
+        <Element Type="FunctionCall" Id="3DFB2EE9">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="66474248"/>
+            <Parameter Type="Param" Library="GAWT" Id="680B0DB4"/>
+            <Parameter Type="Param" Library="GAWT" Id="A7EDAB9B"/>
+            <Parameter Type="Param" Library="GAWT" Id="7F6D8BAD"/>
+            <Parameter Type="Param" Library="GAWT" Id="8E712889"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3CCAD4BD"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B3A1B3F0"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="EE560BD4"/>
+        </Element>
+        <Element Type="Param" Id="680B0DB4">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F13E2CDE"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="A7EDAB9B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="C25E6187"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="D347B321"/>
+        </Element>
+        <Element Type="FunctionCall" Id="D347B321">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="7045D649"/>
+            <Parameter Type="Param" Library="GAWT" Id="AF20FC70"/>
+        </Element>
+        <Element Type="Param" Id="AF20FC70">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="DCD00193"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="A907444B"/>
+        </Element>
+        <Element Type="Param" Id="7F6D8BAD">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="F3144A4A"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="8E712889">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="8CB41668"/>
+            <Variable Type="Variable" Library="GAWT" Id="9BA1F723"/>
+        </Element>
+        <Element Type="FunctionCall" Id="3CCAD4BD">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="39D5862E"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="03DF3727"/>
+        </Element>
+        <Element Type="FunctionCall" Id="39D5862E">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="268BBACB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+        </Element>
+        <Element Type="FunctionCall" Id="03DF3727">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="4C8499AB"/>
+            <Parameter Type="Param" Library="GAWT" Id="E3B75907"/>
+            <Parameter Type="Param" Library="GAWT" Id="2FC05CD7"/>
+        </Element>
+        <Element Type="Param" Id="4C8499AB">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="A4D1FB96"/>
+        </Element>
+        <Element Type="FunctionCall" Id="A4D1FB96">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="981AB385"/>
+            <Parameter Type="Param" Library="GAWT" Id="688B5B54"/>
+            <Parameter Type="Param" Library="GAWT" Id="19D695D6"/>
+        </Element>
+        <Element Type="Param" Id="688B5B54">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="0067DD7D"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="A907444B"/>
+        </Element>
+        <Element Type="Param" Id="19D695D6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="502F3391"/>
+            <Variable Type="Variable" Library="GAWT" Id="9BA1F723"/>
+        </Element>
+        <Element Type="Param" Id="E3B75907">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="2FC05CD7">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="B3A1B3F0">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000136"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <Parameter Type="Param" Library="GAWT" Id="056B58C6"/>
+            <Parameter Type="Param" Library="GAWT" Id="8D072492"/>
+        </Element>
+        <Element Type="Param" Id="056B58C6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000219"/>
+            <Variable Type="Variable" Library="GAWT" Id="FEFF4526"/>
+        </Element>
+        <Element Type="Param" Id="8D072492">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000220"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E5D80F9F"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E5D80F9F">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="E8D948E0"/>
+            <Parameter Type="Param" Library="GAWT" Id="920D6433"/>
+            <Parameter Type="Param" Library="GAWT" Id="9D5BAC15"/>
+        </Element>
+        <Element Type="Param" Id="920D6433">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="A65A0F51"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="A907444B"/>
+        </Element>
+        <Element Type="Param" Id="9D5BAC15">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="AA194FFE"/>
+            <Variable Type="Variable" Library="GAWT" Id="9BA1F723"/>
+        </Element>
+        <Element Type="FunctionCall" Id="EE560BD4">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000137"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="DAF49931"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="A5472438"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E488BE36"/>
+        </Element>
+        <Element Type="FunctionCall" Id="A5472438">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000004"/>
+            <Parameter Type="Param" Library="GAWT" Id="EB2F4194"/>
+        </Element>
+        <Element Type="Param" Id="EB2F4194">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>true</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E488BE36">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="C439C375"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="00000003"/>
+            <Parameter Type="Param" Library="GAWT" Id="527943CE"/>
+            <Parameter Type="Param" Library="GAWT" Id="3E689744"/>
+            <Parameter Type="Param" Library="GAWT" Id="7A933C09"/>
+        </Element>
+        <Element Type="Param" Id="527943CE">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="ABB380C4"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="4C1C5B73"/>
+        </Element>
+        <Element Type="FunctionCall" Id="4C1C5B73">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="2E6C3EA6"/>
+            <Parameter Type="Param" Library="GAWT" Id="7F4EDC54"/>
+            <Parameter Type="Param" Library="GAWT" Id="787F48EF"/>
+            <Parameter Type="Param" Library="GAWT" Id="D341EF9A"/>
+        </Element>
+        <Element Type="Param" Id="7F4EDC54">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="D58D91C3"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="A907444B"/>
+        </Element>
+        <Element Type="Param" Id="787F48EF">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="239005CC"/>
+            <Variable Type="Variable" Library="GAWT" Id="9BA1F723"/>
+        </Element>
+        <Element Type="Param" Id="D341EF9A">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="DF364A48"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="AE81372E"/>
+        </Element>
+        <Element Type="Param" Id="3E689744">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="51567265"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="1E7A4625"/>
+        </Element>
+        <Element Type="Param" Id="7A933C09">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="4A15EC5F"/>
+            <Value>true</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="7863EAB0">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <Parameter Type="Param" Library="GAWT" Id="2BDD3E36"/>
+        </Element>
+        <Element Type="Param" Id="2BDD3E36">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
         </Element>
         <Element Type="FunctionDef" Id="B7356C75">
             <Identifier>GAw3_OrderStringToOrder</Identifier>
@@ -2556,7 +3272,6 @@
             <Parameter Type="ParamDef" Library="GAWT" Id="EF353EDC"/>
         </Element>
         <Element Type="Category" Id="3A2C48E9">
-            <Item Type="Category" Library="GAWT" Id="232D50C2"/>
             <Item Type="Category" Library="GAWT" Id="2B9F7773"/>
             <Item Type="Category" Library="GAWT" Id="89EFE7D9"/>
             <Item Type="Category" Library="GAWT" Id="8344AAB7"/>
@@ -2576,550 +3291,7 @@
             <Item Type="Category" Library="GAWT" Id="7C298C92"/>
             <Item Type="Category" Library="GAWT" Id="D842130F"/>
             <Item Type="Category" Library="GAWT" Id="1EBA4CBB"/>
-        </Element>
-        <Element Type="Category" Id="232D50C2">
-            <Label Type="Label" Library="Ntve" Id="8B88800F"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="B2A988D9"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="9998855B"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="174E5C82"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="7942F9EE"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="DC06B405"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="B34D7156"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="79561FE9"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="19DC4207"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="F620CE40"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="5E4391AF"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="F59B981F"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="71BB30C7"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="3813B74D"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="F6DC0E70"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="58B15CFA"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="A89DEBC6"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="55AC1428"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="B0E43E72"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="67F2E818"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="105E66A1"/>
-        </Element>
-        <Element Type="FunctionDef" Id="B2A988D9">
-            <Identifier>j_SetPlayerOnScoreScreen</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="1710CDA9"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="B4DE3E5D"/>
-        </Element>
-        <Element Type="ParamDef" Id="1710CDA9">
-            <Identifier>whichPlayer</Identifier>
-            <ParameterType>
-                <Type Value="int"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="B4DE3E5D">
-            <Identifier>flag</Identifier>
-            <ParameterType>
-                <Type Value="bool"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="9998855B">
-            <Identifier>j_SetCinematicCamera</Identifier>
-            <Label Type="Label" Library="Ntve" Id="00000025"/>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="06D3463A"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0820FFA5"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="F4CC7FB2"/>
-        </Element>
-        <Element Type="ParamDef" Id="06D3463A">
-            <Identifier>cameraModelFile</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="0820FFA5">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="6C39A0DF"/>
-            <Parameter Type="Param" Library="GAWT" Id="D15B2433"/>
-            <Parameter Type="Param" Library="GAWT" Id="1E984A9D"/>
-            <Parameter Type="Param" Library="GAWT" Id="CA678667"/>
-            <Parameter Type="Param" Library="GAWT" Id="9D77C688"/>
-            <Parameter Type="Param" Library="GAWT" Id="723A8D91"/>
-            <Parameter Type="Param" Library="GAWT" Id="976631EC"/>
-        </Element>
-        <Element Type="Param" Id="D15B2433">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="972A74CB"/>
-            <Value>1</Value>
-            <ValueType Type="int"/>
-        </Element>
-        <Element Type="Param" Id="1E984A9D">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="5AC69524"/>
-            <ValueType Type="preset"/>
-            <ValueElement Type="Preset" Library="Ntve" Id="E85564CA"/>
-            <ValuePreset Type="PresetValue" Library="Ntve" Id="7491C9A8"/>
-        </Element>
-        <Element Type="Param" Id="CA678667">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="1EC7B7A1"/>
-            <Value>0</Value>
-            <ValueType Type="int"/>
-        </Element>
-        <Element Type="Param" Id="9D77C688">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="5908CAE6"/>
-            <Value>270.0</Value>
-            <ValueType Type="fixed"/>
-        </Element>
-        <Element Type="Param" Id="723A8D91">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="EF0CF6FF"/>
-            <Value>CameraModelDummy</Value>
-            <ValueType Type="gamelink"/>
-            <ValueGameType Type="Unit"/>
-        </Element>
-        <Element Type="Param" Id="976631EC">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="9329BF02"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="912CAF39"/>
-        </Element>
-        <Element Type="FunctionCall" Id="912CAF39">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000022"/>
-            <Parameter Type="Param" Library="GAWT" Id="401639FA"/>
-            <Parameter Type="Param" Library="GAWT" Id="A154E544"/>
-        </Element>
-        <Element Type="Param" Id="401639FA">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000034"/>
-            <Value>0</Value>
-            <ValueType Type="fixed"/>
-        </Element>
-        <Element Type="Param" Id="A154E544">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000035"/>
-            <Value>0</Value>
-            <ValueType Type="fixed"/>
-        </Element>
-        <Element Type="FunctionCall" Id="F4CC7FB2">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000360"/>
-            <Parameter Type="Param" Library="GAWT" Id="8CD76625"/>
-            <Parameter Type="Param" Library="GAWT" Id="A3652EFC"/>
-            <Parameter Type="Param" Library="GAWT" Id="9097399B"/>
-            <Parameter Type="Param" Library="GAWT" Id="8C525FC3"/>
-        </Element>
-        <Element Type="Param" Id="8CD76625">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000696"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3179C5D7"/>
-        </Element>
-        <Element Type="FunctionCall" Id="3179C5D7">
-            <FunctionDef Type="FunctionDef" Library="GAWT" Id="9062B6CE"/>
-        </Element>
-        <Element Type="Param" Id="A3652EFC">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000697"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="9CE52C49"/>
-        </Element>
-        <Element Type="FunctionCall" Id="9CE52C49">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000076"/>
-        </Element>
-        <Element Type="Param" Id="9097399B">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000698"/>
-            <Preset Type="PresetValue" Library="Ntve" Id="B7F3795B"/>
-        </Element>
-        <Element Type="Param" Id="8C525FC3">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000699"/>
-            <Value>0</Value>
-            <ValueType Type="fixed"/>
-        </Element>
-        <Element Type="FunctionDef" Id="174E5C82">
-            <Identifier>j_CameraSetSmoothingFactor</Identifier>
-            <Label Type="Label" Library="Ntve" Id="00000025"/>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="2A7752F1"/>
-        </Element>
-        <Element Type="ParamDef" Id="2A7752F1">
-            <Identifier>factor</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="7942F9EE">
-            <Identifier>j_ReloadGame</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="2D92D107"/>
-        </Element>
-        <Element Type="FunctionCall" Id="2D92D107">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="428A4625"/>
-            <Parameter Type="Param" Library="GAWT" Id="653BDE57"/>
-        </Element>
-        <Element Type="Param" Id="653BDE57">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="860A37F5"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="EEB35551"/>
-        </Element>
-        <Element Type="FunctionCall" Id="EEB35551">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000192"/>
-        </Element>
-        <Element Type="FunctionDef" Id="DC06B405">
-            <Identifier>j_SetCampaignMenuRace</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="83494FAC"/>
-        </Element>
-        <Element Type="ParamDef" Id="83494FAC">
-            <Identifier>r</Identifier>
-            <ParameterType>
-                <Type Value="int"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="B34D7156">
-            <Identifier>j_SetCampaignMenuRaceEx</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="70528BF7"/>
-        </Element>
-        <Element Type="ParamDef" Id="70528BF7">
-            <Identifier>campaignIndex</Identifier>
-            <ParameterType>
-                <Type Value="int"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="79561FE9">
-            <Identifier>j_ForceCampaignSelectScreen</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-        </Element>
-        <Element Type="FunctionDef" Id="19DC4207">
-            <Identifier>j_LoadGame</Identifier>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="46091047"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="D546BCBA"/>
-        </Element>
-        <Element Type="ParamDef" Id="46091047">
-            <Identifier>saveFileName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="D546BCBA">
-            <Identifier>doScoreScreen</Identifier>
-            <ParameterType>
-                <Type Value="bool"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="F620CE40">
-            <Identifier>j_RenameSaveDirectory</Identifier>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="1A1E68FC"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="69D699B2"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0CF25EF1"/>
-        </Element>
-        <Element Type="ParamDef" Id="1A1E68FC">
-            <Identifier>sourceDirName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="69D699B2">
-            <Identifier>destDirName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="0CF25EF1">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
-        </Element>
-        <Element Type="FunctionDef" Id="5E4391AF">
-            <Identifier>j_RemoveSaveDirectory</Identifier>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="05F49BA1"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="A52C1B7E"/>
-        </Element>
-        <Element Type="ParamDef" Id="05F49BA1">
-            <Identifier>sourceDirName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="A52C1B7E">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
-        </Element>
-        <Element Type="FunctionDef" Id="F59B981F">
-            <Identifier>j_CopySaveGame</Identifier>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="3BDEECC9"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="915AB64C"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="922F75DF"/>
-        </Element>
-        <Element Type="ParamDef" Id="3BDEECC9">
-            <Identifier>sourceSaveName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="915AB64C">
-            <Identifier>destSaveName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="922F75DF">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
-        </Element>
-        <Element Type="FunctionDef" Id="71BB30C7">
-            <Identifier>j_SaveGameExists</Identifier>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="297A1FAC"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="04B761C3"/>
-        </Element>
-        <Element Type="ParamDef" Id="297A1FAC">
-            <Identifier>saveName</Identifier>
-            <ParameterType>
-                <Type Value="string"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="04B761C3">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
-        </Element>
-        <Element Type="FunctionDef" Id="3813B74D">
-            <Identifier>j_SyncSelections</Identifier>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-        </Element>
-        <Element Type="FunctionDef" Id="F6DC0E70">
-            <Identifier>j_RegisterStackedSound</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="CD2B1F96"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="6DA409B1"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="D29C3657"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="023FF38F"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="01F8797B"/>
-        </Element>
-        <Element Type="ParamDef" Id="CD2B1F96">
-            <Identifier>soundHandle</Identifier>
-            <ParameterType>
-                <Type Value="struct"/>
-                <TypeElement Type="Structure" Library="GAWT" Id="EDDBA919"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="6DA409B1">
-            <Identifier>byPosition</Identifier>
-            <ParameterType>
-                <Type Value="bool"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="D29C3657">
-            <Identifier>rectwidth</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="023FF38F">
-            <Identifier>rectheight</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="01F8797B">
-            <Disabled/>
-            <FunctionDef Type="FunctionDef" Library="GAWT" Id="0196F5DC"/>
-            <Parameter Type="Param" Library="GAWT" Id="240616F4"/>
-        </Element>
-        <Element Type="Param" Id="240616F4">
-            <ParameterDef Type="ParamDef" Library="GAWT" Id="13B80994"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="CD2B1F96"/>
-        </Element>
-        <Element Type="FunctionDef" Id="58B15CFA">
-            <Identifier>j_UnregisterStackedSound</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="7B770CE6"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="5F83E1DF"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="C4A408AE"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="0C27D8FB"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3ED61734"/>
-        </Element>
-        <Element Type="ParamDef" Id="7B770CE6">
-            <Identifier>soundHandle</Identifier>
-            <ParameterType>
-                <Type Value="struct"/>
-                <TypeElement Type="Structure" Library="GAWT" Id="EDDBA919"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="5F83E1DF">
-            <Identifier>byPosition</Identifier>
-            <ParameterType>
-                <Type Value="bool"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="C4A408AE">
-            <Identifier>rectwidth</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="0C27D8FB">
-            <Identifier>rectheight</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="3ED61734">
-            <Disabled/>
-            <FunctionDef Type="FunctionDef" Library="GAWT" Id="0A2734AB"/>
-            <Parameter Type="Param" Library="GAWT" Id="331C04F5"/>
-            <Parameter Type="Param" Library="GAWT" Id="D637BA7A"/>
-            <Parameter Type="Param" Library="GAWT" Id="20C12003"/>
-        </Element>
-        <Element Type="Param" Id="331C04F5">
-            <ParameterDef Type="ParamDef" Library="GAWT" Id="8F2CCCC0"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="7B770CE6"/>
-        </Element>
-        <Element Type="Param" Id="D637BA7A">
-            <ParameterDef Type="ParamDef" Library="GAWT" Id="4C0D0560"/>
-            <Value>false</Value>
-            <ValueType Type="bool"/>
-        </Element>
-        <Element Type="Param" Id="20C12003">
-            <ParameterDef Type="ParamDef" Library="GAWT" Id="643B5C67"/>
-            <Value>false</Value>
-            <ValueType Type="bool"/>
-        </Element>
-        <Element Type="FunctionDef" Id="A89DEBC6">
-            <Identifier>j_SetSoundVelocity</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="B54356A9"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="1409A96C"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="B508D416"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="8CDF1B46"/>
-        </Element>
-        <Element Type="ParamDef" Id="B54356A9">
-            <Identifier>soundHandle</Identifier>
-            <ParameterType>
-                <Type Value="sound"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="1409A96C">
-            <Identifier>x</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="B508D416">
-            <Identifier>y</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="8CDF1B46">
-            <Identifier>z</Identifier>
-            <ParameterType>
-                <Type Value="fixed"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="55AC1428">
-            <Identifier>j_SetDefaultDifficulty</Identifier>
-            <Deprecated/>
-            <Internal/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="65C57B98"/>
-        </Element>
-        <Element Type="ParamDef" Id="65C57B98">
-            <Identifier>g</Identifier>
-            <ParameterType>
-                <Type Value="int"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="B0E43E72">
-            <Identifier>j_TriggerWaitOnSleeps</Identifier>
-            <Deprecated/>
-            <FlagAction/>
-            <FlagNoScriptPrefix/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="580C9BBD"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="EE55C431"/>
-        </Element>
-        <Element Type="ParamDef" Id="580C9BBD">
-            <Identifier>whichTrigger</Identifier>
-            <ParameterType>
-                <Type Value="trigger"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="EE55C431">
-            <Identifier>flag</Identifier>
-            <ParameterType>
-                <Type Value="bool"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="67F2E818">
-            <Identifier>j_IsTriggerWaitOnSleeps</Identifier>
-            <Deprecated/>
-            <FlagCall/>
-            <FlagCustomScript/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="F7E4A39E"/>
-        </Element>
-        <Element Type="ParamDef" Id="F7E4A39E">
-            <Identifier>whichTrigger</Identifier>
-            <ParameterType>
-                <Type Value="trigger"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionDef" Id="105E66A1">
-            <Identifier>j_CreateTrigger</Identifier>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <FlagInline/>
-            <ReturnType>
-                <Type Value="trigger"/>
-            </ReturnType>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B0885426"/>
-        </Element>
-        <Element Type="FunctionCall" Id="B0885426">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
-            <Parameter Type="Param" Library="GAWT" Id="CBFEA4A1"/>
-        </Element>
-        <Element Type="Param" Id="CBFEA4A1">
-            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
-            <Preset Type="PresetValue" Library="Ntve" Id="00000542"/>
+            <Item Type="Category" Library="GAWT" Id="232D50C2"/>
         </Element>
         <Element Type="Category" Id="2B9F7773">
             <Label Type="Label" Library="Ntve" Id="29920330"/>
@@ -7441,6 +7613,7 @@
             <Item Type="FunctionDef" Library="GAWT" Id="FB77EACE"/>
             <Item Type="FunctionDef" Library="GAWT" Id="4DC6502D"/>
             <Item Type="FunctionDef" Library="GAWT" Id="6A3E208B"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="728653C6"/>
         </Element>
         <Element Type="FunctionDef" Id="5AC421C0">
             <Identifier>j_SetUnitPosition</Identifier>
@@ -8759,6 +8932,436 @@
         <Element Type="Param" Id="8311F186">
             <ParameterDef Type="ParamDef" Library="Ntve" Id="00000694"/>
             <Preset Type="PresetValue" Library="Ntve" Id="1468BD55"/>
+        </Element>
+        <Element Type="FunctionDef" Id="728653C6">
+            <Identifier>j_IsUnitType</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="170179A8"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CB758470"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="723399A8"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="8E8F04D5"/>
+        </Element>
+        <Element Type="ParamDef" Id="5A86F24F">
+            <Identifier>whichUnit</Identifier>
+            <ParameterType>
+                <Type Value="unit"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="170179A8">
+            <Identifier>whichUnitType</Identifier>
+            <ParameterType>
+                <Type Value="int"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="CB758470">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000123"/>
+            <ScriptCode>
+                    string ut=UnitGetType(lp_whichUnit);
+                    int wc=UnitWeaponCount(lp_whichUnit);
+                    if(lp_whichUnitType==UNIT_TYPE_DEAD){
+                        return UnitTestState(lp_whichUnit,c_unitStateIsDead);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_STUNNED){
+                        return UnitTestState(lp_whichUnit,c_unitStateStunned);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_RESISTANT){
+                        return UnitTestState(lp_whichUnit,c_unitStateResistant);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_ETHEREAL){
+                        return UnitTestState(lp_whichUnit,c_unitStateEtherealWar3);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_MAGIC_IMMUNE){
+                        return !UnitTestState(lp_whichUnit,c_unitStateImmunityWar3);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_FLYING){
+                        return UnitMoverExists(lp_whichUnit, &quot;Fly&quot;);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_GROUND){
+                        return UnitMoverExists(lp_whichUnit,&quot;Ground&quot;)||UnitMoverExists(lp_whichUnit,&quot;horse&quot;)||UnitMoverExists(lp_whichUnit,&quot;hover&quot;);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_GIANT){
+                        return UnitHasBehavior(lp_whichUnit,&quot;giant&quot;);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_UNDEAD){
+                        return UnitHasBehavior(lp_whichUnit,&quot;undead&quot;);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_UNDEAD){
+                        return UnitHasBehavior(lp_whichUnit,&quot;tauren&quot;);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_PEON){
+                        return UnitTypeTestFlag(ut,c_unitFlagWorker);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_HERO){
+                        return UnitTypeTestFlag(ut,c_unitFlagHero);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_STRUCTURE){
+                        return UnitTypeTestAttribute(ut,c_unitAttributeStructure);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_TOWNHALL){
+                        return UnitTypeTestFlag(ut,c_unitFlagPenaltyRevealed);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_SUMMONED){
+                        return UnitTypeTestAttribute(ut,c_unitAttributeSummoned);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_MECHANICAL){
+                        return UnitTypeTestAttribute(ut,c_unitAttributeMechanical);
+                    }
+                    if(lp_whichUnitType==UNIT_TYPE_ANCIENT){
+                        return UnitTypeTestAttribute(ut,c_unitAttributeAncientWar3);
+                    }
+                	if(lp_whichUnitType==UNIT_TYPE_SAPPER){
+                        return UnitTypeTestAttribute(ut,c_unitAttributeSapperWar3);
+                	}
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="723399A8">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="91C49196"/>
+            <Parameter Type="Param" Library="GAWT" Id="D017734B"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="E8CB1658"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="AECA29D8"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0E2E7D2A"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="EB6F36D8"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CDC3C961"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="D289F5CC"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="DFF796EB"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0421797D"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="D18512A9"/>
+        </Element>
+        <Element Type="Param" Id="D017734B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="B4ACF12A"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="170179A8"/>
+        </Element>
+        <Element Type="FunctionCall" Id="E8CB1658">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="0FA8A3A9"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B165BE48"/>
+        </Element>
+        <Element Type="Param" Id="0FA8A3A9">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_ATTACKS_FLYING
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="B165BE48">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="6E5BDD43"/>
+        </Element>
+        <Element Type="Param" Id="6E5BDD43">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="BA3CB264"/>
+        </Element>
+        <Element Type="FunctionCall" Id="BA3CB264">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="A5C57778"/>
+            <Parameter Type="Param" Library="GAWT" Id="51FDB9F0"/>
+            <Parameter Type="Param" Library="GAWT" Id="10C84035"/>
+        </Element>
+        <Element Type="Param" Id="51FDB9F0">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="A907444B"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="10C84035">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AE81372E"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="00000439"/>
+        </Element>
+        <Element Type="FunctionCall" Id="AECA29D8">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="8D31DE01"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="4CB16D33"/>
+        </Element>
+        <Element Type="Param" Id="8D31DE01">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_ATTACKS_GROUND
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="4CB16D33">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="A70AEF77"/>
+        </Element>
+        <Element Type="Param" Id="A70AEF77">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="D830B648"/>
+        </Element>
+        <Element Type="FunctionCall" Id="D830B648">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="A5C57778"/>
+            <Parameter Type="Param" Library="GAWT" Id="47D517F0"/>
+            <Parameter Type="Param" Library="GAWT" Id="C60EB961"/>
+        </Element>
+        <Element Type="Param" Id="47D517F0">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="A907444B"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="C60EB961">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AE81372E"/>
+            <Preset Type="PresetValue" Library="GAWT" Id="472A93DE"/>
+        </Element>
+        <Element Type="FunctionCall" Id="0E2E7D2A">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="49197613"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="5E420E97"/>
+        </Element>
+        <Element Type="Param" Id="49197613">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_MELEE_ATTACKER
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="5E420E97">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="A21799A6"/>
+        </Element>
+        <Element Type="Param" Id="A21799A6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="BD70FDB7"/>
+        </Element>
+        <Element Type="FunctionCall" Id="BD70FDB7">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="59B86C13"/>
+            <Parameter Type="Param" Library="GAWT" Id="9DC84B90"/>
+            <Parameter Type="Param" Library="GAWT" Id="8A578863"/>
+        </Element>
+        <Element Type="Param" Id="9DC84B90">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="8A578863">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="CA5FCBBF"/>
+            <Value>true</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="EB6F36D8">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="C2E50576"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="8F96231F"/>
+        </Element>
+        <Element Type="Param" Id="C2E50576">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_RANGED_ATTACKER
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="8F96231F">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="66C88032"/>
+        </Element>
+        <Element Type="Param" Id="66C88032">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CDDAE6D2"/>
+        </Element>
+        <Element Type="FunctionCall" Id="CDDAE6D2">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="59B86C13"/>
+            <Parameter Type="Param" Library="GAWT" Id="F00A000D"/>
+            <Parameter Type="Param" Library="GAWT" Id="B440E78E"/>
+        </Element>
+        <Element Type="Param" Id="F00A000D">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="D50E0AC1"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="B440E78E">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="CA5FCBBF"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionCall" Id="CDC3C961">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="27F230C6"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="D53434DE"/>
+        </Element>
+        <Element Type="Param" Id="27F230C6">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_PLAGUED
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="D53434DE">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="A310094B"/>
+        </Element>
+        <Element Type="Param" Id="A310094B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="A663CB07"/>
+        </Element>
+        <Element Type="FunctionCall" Id="A663CB07">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Parameter Type="Param" Library="GAWT" Id="1E5FB6CC"/>
+            <Parameter Type="Param" Library="GAWT" Id="C981D8F3"/>
+        </Element>
+        <Element Type="Param" Id="1E5FB6CC">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="C981D8F3">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="D51153ED"/>
+        </Element>
+        <Element Type="FunctionCall" Id="D289F5CC">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="F1A2F3FB"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="F988D44A"/>
+        </Element>
+        <Element Type="Param" Id="F1A2F3FB">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_SNARED
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="F988D44A">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="BDB164C7"/>
+        </Element>
+        <Element Type="Param" Id="BDB164C7">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="2D58187F"/>
+        </Element>
+        <Element Type="FunctionCall" Id="2D58187F">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Parameter Type="Param" Library="GAWT" Id="B435AAE1"/>
+            <Parameter Type="Param" Library="GAWT" Id="7C5C179C"/>
+        </Element>
+        <Element Type="Param" Id="B435AAE1">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="7C5C179C">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="68E0194E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="DFF796EB">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="A794EAC2"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="9F9E1B2F"/>
+        </Element>
+        <Element Type="Param" Id="A794EAC2">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_POLYMORPHED
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="9F9E1B2F">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="E81FD50D"/>
+        </Element>
+        <Element Type="Param" Id="E81FD50D">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="FCE9CA6E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="FCE9CA6E">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Parameter Type="Param" Library="GAWT" Id="4F0EE5C7"/>
+            <Parameter Type="Param" Library="GAWT" Id="CD88D4AB"/>
+        </Element>
+        <Element Type="Param" Id="4F0EE5C7">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="CD88D4AB">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="A49FE9C6"/>
+        </Element>
+        <Element Type="FunctionCall" Id="0421797D">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="D8F768DF"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="454F37A0"/>
+        </Element>
+        <Element Type="Param" Id="D8F768DF">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_POISONED
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="454F37A0">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="F85A2DB2"/>
+        </Element>
+        <Element Type="Param" Id="F85A2DB2">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="1709BAB4"/>
+        </Element>
+        <Element Type="FunctionCall" Id="1709BAB4">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Parameter Type="Param" Library="GAWT" Id="76EA56D6"/>
+            <Parameter Type="Param" Library="GAWT" Id="E72DE4F2"/>
+        </Element>
+        <Element Type="Param" Id="76EA56D6">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="E72DE4F2">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="60E0937E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="D18512A9">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="3A1227AB"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="AD43BC93"/>
+            <Parameter Type="Param" Library="GAWT" Id="FED94E83"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0AC2485F"/>
+        </Element>
+        <Element Type="Param" Id="FED94E83">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9A8F1093"/>
+            <CustomType Type="int"/>
+            <ScriptCode>
+                UNIT_TYPE_SLEEPING
+            </ScriptCode>
+        </Element>
+        <Element Type="FunctionCall" Id="0AC2485F">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <SubFunctionType Type="SubFuncType" Library="Ntve" Id="363CE97C"/>
+            <Parameter Type="Param" Library="GAWT" Id="A477EE32"/>
+        </Element>
+        <Element Type="Param" Id="A477EE32">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="F7FE503E"/>
+        </Element>
+        <Element Type="FunctionCall" Id="F7FE503E">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="553A134A"/>
+            <Parameter Type="Param" Library="GAWT" Id="CBE32B2E"/>
+            <Parameter Type="Param" Library="GAWT" Id="6DC1387D"/>
+        </Element>
+        <Element Type="Param" Id="CBE32B2E">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AED775D8"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
+        </Element>
+        <Element Type="Param" Id="6DC1387D">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="AF5C870A"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="F9718AEF"/>
+        </Element>
+        <Element Type="FunctionCall" Id="8E8F04D5">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <Parameter Type="Param" Library="GAWT" Id="437C06C4"/>
+        </Element>
+        <Element Type="Param" Id="437C06C4">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
         </Element>
         <Element Type="Category" Id="D899A16A">
             <Label Type="Label" Library="Ntve" Id="00000013"/>
@@ -14750,6 +15353,550 @@
                     return DataTableGetUnit(false,&quot;GAw3_EnumItem_&quot;+IntToString(Stack));
             </ScriptCode>
         </Element>
+        <Element Type="Category" Id="232D50C2">
+            <Label Type="Label" Library="Ntve" Id="8B88800F"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="B2A988D9"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="9998855B"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="174E5C82"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="7942F9EE"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="DC06B405"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="B34D7156"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="79561FE9"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="19DC4207"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="F620CE40"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="5E4391AF"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="F59B981F"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="71BB30C7"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="3813B74D"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="F6DC0E70"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="58B15CFA"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="A89DEBC6"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="55AC1428"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="B0E43E72"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="67F2E818"/>
+            <Item Type="FunctionDef" Library="GAWT" Id="105E66A1"/>
+        </Element>
+        <Element Type="FunctionDef" Id="B2A988D9">
+            <Identifier>j_SetPlayerOnScoreScreen</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="1710CDA9"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="B4DE3E5D"/>
+        </Element>
+        <Element Type="ParamDef" Id="1710CDA9">
+            <Identifier>whichPlayer</Identifier>
+            <ParameterType>
+                <Type Value="int"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="B4DE3E5D">
+            <Identifier>flag</Identifier>
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="9998855B">
+            <Identifier>j_SetCinematicCamera</Identifier>
+            <Label Type="Label" Library="Ntve" Id="00000025"/>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="06D3463A"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0820FFA5"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="F4CC7FB2"/>
+        </Element>
+        <Element Type="ParamDef" Id="06D3463A">
+            <Identifier>cameraModelFile</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="0820FFA5">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="6C39A0DF"/>
+            <Parameter Type="Param" Library="GAWT" Id="D15B2433"/>
+            <Parameter Type="Param" Library="GAWT" Id="1E984A9D"/>
+            <Parameter Type="Param" Library="GAWT" Id="CA678667"/>
+            <Parameter Type="Param" Library="GAWT" Id="9D77C688"/>
+            <Parameter Type="Param" Library="GAWT" Id="723A8D91"/>
+            <Parameter Type="Param" Library="GAWT" Id="976631EC"/>
+        </Element>
+        <Element Type="Param" Id="D15B2433">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="972A74CB"/>
+            <Value>1</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="1E984A9D">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="5AC69524"/>
+            <ValueType Type="preset"/>
+            <ValueElement Type="Preset" Library="Ntve" Id="E85564CA"/>
+            <ValuePreset Type="PresetValue" Library="Ntve" Id="7491C9A8"/>
+        </Element>
+        <Element Type="Param" Id="CA678667">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="1EC7B7A1"/>
+            <Value>0</Value>
+            <ValueType Type="int"/>
+        </Element>
+        <Element Type="Param" Id="9D77C688">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="5908CAE6"/>
+            <Value>270.0</Value>
+            <ValueType Type="fixed"/>
+        </Element>
+        <Element Type="Param" Id="723A8D91">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="EF0CF6FF"/>
+            <Value>CameraModelDummy</Value>
+            <ValueType Type="gamelink"/>
+            <ValueGameType Type="Unit"/>
+        </Element>
+        <Element Type="Param" Id="976631EC">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="9329BF02"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="912CAF39"/>
+        </Element>
+        <Element Type="FunctionCall" Id="912CAF39">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000022"/>
+            <Parameter Type="Param" Library="GAWT" Id="401639FA"/>
+            <Parameter Type="Param" Library="GAWT" Id="A154E544"/>
+        </Element>
+        <Element Type="Param" Id="401639FA">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000034"/>
+            <Value>0</Value>
+            <ValueType Type="fixed"/>
+        </Element>
+        <Element Type="Param" Id="A154E544">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000035"/>
+            <Value>0</Value>
+            <ValueType Type="fixed"/>
+        </Element>
+        <Element Type="FunctionCall" Id="F4CC7FB2">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000360"/>
+            <Parameter Type="Param" Library="GAWT" Id="8CD76625"/>
+            <Parameter Type="Param" Library="GAWT" Id="A3652EFC"/>
+            <Parameter Type="Param" Library="GAWT" Id="9097399B"/>
+            <Parameter Type="Param" Library="GAWT" Id="8C525FC3"/>
+        </Element>
+        <Element Type="Param" Id="8CD76625">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000696"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3179C5D7"/>
+        </Element>
+        <Element Type="FunctionCall" Id="3179C5D7">
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="9062B6CE"/>
+        </Element>
+        <Element Type="Param" Id="A3652EFC">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000697"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="9CE52C49"/>
+        </Element>
+        <Element Type="FunctionCall" Id="9CE52C49">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000076"/>
+        </Element>
+        <Element Type="Param" Id="9097399B">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000698"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="B7F3795B"/>
+        </Element>
+        <Element Type="Param" Id="8C525FC3">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000699"/>
+            <Value>0</Value>
+            <ValueType Type="fixed"/>
+        </Element>
+        <Element Type="FunctionDef" Id="174E5C82">
+            <Identifier>j_CameraSetSmoothingFactor</Identifier>
+            <Label Type="Label" Library="Ntve" Id="00000025"/>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="2A7752F1"/>
+        </Element>
+        <Element Type="ParamDef" Id="2A7752F1">
+            <Identifier>factor</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="7942F9EE">
+            <Identifier>j_ReloadGame</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="2D92D107"/>
+        </Element>
+        <Element Type="FunctionCall" Id="2D92D107">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="428A4625"/>
+            <Parameter Type="Param" Library="GAWT" Id="653BDE57"/>
+        </Element>
+        <Element Type="Param" Id="653BDE57">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="860A37F5"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="EEB35551"/>
+        </Element>
+        <Element Type="FunctionCall" Id="EEB35551">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000192"/>
+        </Element>
+        <Element Type="FunctionDef" Id="DC06B405">
+            <Identifier>j_SetCampaignMenuRace</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="83494FAC"/>
+        </Element>
+        <Element Type="ParamDef" Id="83494FAC">
+            <Identifier>r</Identifier>
+            <ParameterType>
+                <Type Value="int"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="B34D7156">
+            <Identifier>j_SetCampaignMenuRaceEx</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="70528BF7"/>
+        </Element>
+        <Element Type="ParamDef" Id="70528BF7">
+            <Identifier>campaignIndex</Identifier>
+            <ParameterType>
+                <Type Value="int"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="79561FE9">
+            <Identifier>j_ForceCampaignSelectScreen</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+        </Element>
+        <Element Type="FunctionDef" Id="19DC4207">
+            <Identifier>j_LoadGame</Identifier>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="46091047"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D546BCBA"/>
+        </Element>
+        <Element Type="ParamDef" Id="46091047">
+            <Identifier>saveFileName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="D546BCBA">
+            <Identifier>doScoreScreen</Identifier>
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="F620CE40">
+            <Identifier>j_RenameSaveDirectory</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="1A1E68FC"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="69D699B2"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="0CF25EF1"/>
+        </Element>
+        <Element Type="ParamDef" Id="1A1E68FC">
+            <Identifier>sourceDirName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="69D699B2">
+            <Identifier>destDirName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="0CF25EF1">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
+        </Element>
+        <Element Type="FunctionDef" Id="5E4391AF">
+            <Identifier>j_RemoveSaveDirectory</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="05F49BA1"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="A52C1B7E"/>
+        </Element>
+        <Element Type="ParamDef" Id="05F49BA1">
+            <Identifier>sourceDirName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="A52C1B7E">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
+        </Element>
+        <Element Type="FunctionDef" Id="F59B981F">
+            <Identifier>j_CopySaveGame</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="3BDEECC9"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="915AB64C"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="922F75DF"/>
+        </Element>
+        <Element Type="ParamDef" Id="3BDEECC9">
+            <Identifier>sourceSaveName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="915AB64C">
+            <Identifier>destSaveName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="922F75DF">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
+        </Element>
+        <Element Type="FunctionDef" Id="71BB30C7">
+            <Identifier>j_SaveGameExists</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="297A1FAC"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="04B761C3"/>
+        </Element>
+        <Element Type="ParamDef" Id="297A1FAC">
+            <Identifier>saveName</Identifier>
+            <ParameterType>
+                <Type Value="string"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="04B761C3">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
+        </Element>
+        <Element Type="FunctionDef" Id="3813B74D">
+            <Identifier>j_SyncSelections</Identifier>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+        </Element>
+        <Element Type="FunctionDef" Id="F6DC0E70">
+            <Identifier>j_RegisterStackedSound</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="CD2B1F96"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="6DA409B1"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="D29C3657"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="023FF38F"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="01F8797B"/>
+        </Element>
+        <Element Type="ParamDef" Id="CD2B1F96">
+            <Identifier>soundHandle</Identifier>
+            <ParameterType>
+                <Type Value="struct"/>
+                <TypeElement Type="Structure" Library="GAWT" Id="EDDBA919"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="6DA409B1">
+            <Identifier>byPosition</Identifier>
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="D29C3657">
+            <Identifier>rectwidth</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="023FF38F">
+            <Identifier>rectheight</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="01F8797B">
+            <Disabled/>
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="0196F5DC"/>
+            <Parameter Type="Param" Library="GAWT" Id="240616F4"/>
+        </Element>
+        <Element Type="Param" Id="240616F4">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="13B80994"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="CD2B1F96"/>
+        </Element>
+        <Element Type="FunctionDef" Id="58B15CFA">
+            <Identifier>j_UnregisterStackedSound</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="7B770CE6"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="5F83E1DF"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="C4A408AE"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="0C27D8FB"/>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="3ED61734"/>
+        </Element>
+        <Element Type="ParamDef" Id="7B770CE6">
+            <Identifier>soundHandle</Identifier>
+            <ParameterType>
+                <Type Value="struct"/>
+                <TypeElement Type="Structure" Library="GAWT" Id="EDDBA919"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="5F83E1DF">
+            <Identifier>byPosition</Identifier>
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="C4A408AE">
+            <Identifier>rectwidth</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="0C27D8FB">
+            <Identifier>rectheight</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionCall" Id="3ED61734">
+            <Disabled/>
+            <FunctionDef Type="FunctionDef" Library="GAWT" Id="0A2734AB"/>
+            <Parameter Type="Param" Library="GAWT" Id="331C04F5"/>
+            <Parameter Type="Param" Library="GAWT" Id="D637BA7A"/>
+            <Parameter Type="Param" Library="GAWT" Id="20C12003"/>
+        </Element>
+        <Element Type="Param" Id="331C04F5">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="8F2CCCC0"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="7B770CE6"/>
+        </Element>
+        <Element Type="Param" Id="D637BA7A">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="4C0D0560"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="Param" Id="20C12003">
+            <ParameterDef Type="ParamDef" Library="GAWT" Id="643B5C67"/>
+            <Value>false</Value>
+            <ValueType Type="bool"/>
+        </Element>
+        <Element Type="FunctionDef" Id="A89DEBC6">
+            <Identifier>j_SetSoundVelocity</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="B54356A9"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="1409A96C"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="B508D416"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="8CDF1B46"/>
+        </Element>
+        <Element Type="ParamDef" Id="B54356A9">
+            <Identifier>soundHandle</Identifier>
+            <ParameterType>
+                <Type Value="sound"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="1409A96C">
+            <Identifier>x</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="B508D416">
+            <Identifier>y</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="8CDF1B46">
+            <Identifier>z</Identifier>
+            <ParameterType>
+                <Type Value="fixed"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="55AC1428">
+            <Identifier>j_SetDefaultDifficulty</Identifier>
+            <Deprecated/>
+            <Internal/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="65C57B98"/>
+        </Element>
+        <Element Type="ParamDef" Id="65C57B98">
+            <Identifier>g</Identifier>
+            <ParameterType>
+                <Type Value="int"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="B0E43E72">
+            <Identifier>j_TriggerWaitOnSleeps</Identifier>
+            <Deprecated/>
+            <FlagAction/>
+            <FlagNoScriptPrefix/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="580C9BBD"/>
+            <Parameter Type="ParamDef" Library="GAWT" Id="EE55C431"/>
+        </Element>
+        <Element Type="ParamDef" Id="580C9BBD">
+            <Identifier>whichTrigger</Identifier>
+            <ParameterType>
+                <Type Value="trigger"/>
+            </ParameterType>
+        </Element>
+        <Element Type="ParamDef" Id="EE55C431">
+            <Identifier>flag</Identifier>
+            <ParameterType>
+                <Type Value="bool"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="67F2E818">
+            <Identifier>j_IsTriggerWaitOnSleeps</Identifier>
+            <Deprecated/>
+            <FlagCall/>
+            <FlagCustomScript/>
+            <FlagNoScriptPrefix/>
+            <ReturnType>
+                <Type Value="bool"/>
+            </ReturnType>
+            <Parameter Type="ParamDef" Library="GAWT" Id="F7E4A39E"/>
+        </Element>
+        <Element Type="ParamDef" Id="F7E4A39E">
+            <Identifier>whichTrigger</Identifier>
+            <ParameterType>
+                <Type Value="trigger"/>
+            </ParameterType>
+        </Element>
+        <Element Type="FunctionDef" Id="105E66A1">
+            <Identifier>j_CreateTrigger</Identifier>
+            <Internal/>
+            <FlagCall/>
+            <FlagNoScriptPrefix/>
+            <FlagInline/>
+            <ReturnType>
+                <Type Value="trigger"/>
+            </ReturnType>
+            <FunctionCall Type="FunctionCall" Library="GAWT" Id="B0885426"/>
+        </Element>
+        <Element Type="FunctionCall" Id="B0885426">
+            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000097"/>
+            <Parameter Type="Param" Library="GAWT" Id="CBFEA4A1"/>
+        </Element>
+        <Element Type="Param" Id="CBFEA4A1">
+            <ParameterDef Type="ParamDef" Library="Ntve" Id="00000488"/>
+            <Preset Type="PresetValue" Library="Ntve" Id="00000542"/>
+        </Element>
         <Element Type="Category" Id="CADBFC88">
             <Item Type="FunctionDef" Library="GAWT" Id="9F8FA31D"/>
             <Item Type="FunctionDef" Library="GAWT" Id="E3A67B06"/>
@@ -15184,7 +16331,6 @@
             <Item Type="FunctionDef" Library="GAWT" Id="188A593F"/>
             <Item Type="FunctionDef" Library="GAWT" Id="AD6F657C"/>
             <Item Type="FunctionDef" Library="GAWT" Id="31C595E1"/>
-            <Item Type="FunctionDef" Library="GAWT" Id="728653C6"/>
             <Item Type="FunctionDef" Library="GAWT" Id="E41F4552"/>
             <Item Type="FunctionDef" Library="GAWT" Id="891B0486"/>
             <Item Type="FunctionDef" Library="GAWT" Id="197DD169"/>
@@ -25385,34 +26531,6 @@
             </ParameterType>
         </Element>
         <Element Type="FunctionCall" Id="924F8CD1">
-            <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
-        </Element>
-        <Element Type="FunctionDef" Id="728653C6">
-            <Identifier>j_IsUnitType</Identifier>
-            <NotYetImplemented/>
-            <Internal/>
-            <FlagCall/>
-            <FlagNoScriptPrefix/>
-            <ReturnType>
-                <Type Value="bool"/>
-            </ReturnType>
-            <Parameter Type="ParamDef" Library="GAWT" Id="5A86F24F"/>
-            <Parameter Type="ParamDef" Library="GAWT" Id="170179A8"/>
-            <FunctionCall Type="FunctionCall" Library="GAWT" Id="CB758470"/>
-        </Element>
-        <Element Type="ParamDef" Id="5A86F24F">
-            <Identifier>whichUnit</Identifier>
-            <ParameterType>
-                <Type Value="unit"/>
-            </ParameterType>
-        </Element>
-        <Element Type="ParamDef" Id="170179A8">
-            <Identifier>whichUnitType</Identifier>
-            <ParameterType>
-                <Type Value="int"/>
-            </ParameterType>
-        </Element>
-        <Element Type="FunctionCall" Id="CB758470">
             <FunctionDef Type="FunctionDef" Library="Ntve" Id="00000139"/>
         </Element>
         <Element Type="FunctionDef" Id="E41F4552">
